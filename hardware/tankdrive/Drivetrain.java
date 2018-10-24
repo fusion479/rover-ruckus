@@ -32,7 +32,7 @@ public class Drivetrain extends Mechanism {
     /**
      * Ticks per revolution for a NeverRest 40.
      */
-    private static final double     COUNTS_PER_MOTOR_REV    = 1120;
+    private static final double     COUNTS_PER_MOTOR_REV    = 723.24;
     /**
      * Drivetrain gear ratio (< 1.0 if geared up).
      */
@@ -63,7 +63,7 @@ public class Drivetrain extends Mechanism {
     private DcMotor leftBack;
     private DcMotor rightFront;
     private DcMotor rightBack;
-
+    private DcMotor middle;
     private BNO055IMU imu;
 
 
@@ -93,24 +93,28 @@ public class Drivetrain extends Mechanism {
         leftBack = hwMap.dcMotor.get("leftBack");
         rightFront = hwMap.dcMotor.get("rightFront");
         rightBack = hwMap.dcMotor.get("rightBack");
+        middle = hwMap.dcMotor.get("middle");
 
         // Set motor direction (AndyMark configuration)
         leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
         leftBack.setDirection(DcMotorSimple.Direction.FORWARD);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        middle.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Set motor brake behavior
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        middle.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Set all motors to zero power
         leftFront.setPower(0);
         leftBack.setPower(0);
         rightFront.setPower(0);
         rightBack.setPower(0);
+        middle.setPower(0);
 
         // Initialize IMU with parameters
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -136,9 +140,11 @@ public class Drivetrain extends Mechanism {
     public void encoderInit() {
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        middle.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        middle.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 
@@ -292,5 +298,63 @@ public class Drivetrain extends Mechanism {
         rightFront.setPower(0);
         leftBack.setPower(0);
         rightBack.setPower(0);
+    }
+    public void strafe(double power){
+        middle.setPower(power);
+    }
+
+    public void strafeToPos(double speed, double inches, double timeoutS) {
+
+        // Target position variables
+        int newTarget;
+
+        // Current heading angle of robot
+        double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+
+        // Determine new target position, and pass to motor controller
+        newTarget = middle.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
+        middle.setTargetPosition(newTarget);
+
+        // Turn On RUN_TO_POSITION
+        middle.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // Reset the timeout time
+        ElapsedTime runtime = new ElapsedTime();
+        runtime.reset();
+
+        // Loop until a condition is met
+        while (opMode.opModeIsActive() &&
+                (runtime.seconds() < timeoutS) &&
+                middle.isBusy()) {
+
+            // Get IMU angles
+            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+            // Heading angle
+            double gyroAngle = angles.firstAngle;
+
+            // Adjustment factor for heading
+            double p = (gyroAngle - currentAngle) * PCONSTANT;
+
+            // Set power of drivetrain motors accounting for adjustment
+            leftFront.setPower(p);
+            rightFront.setPower(-p);
+
+            // Display info for the driver.
+            opMode.telemetry.addData("Path1", "Running to %7d", newTarget);
+            opMode.telemetry.addData("Path2", "Running at %7d",
+                    middle.getCurrentPosition());
+            opMode.telemetry.addData("Heading: ", "%f", gyroAngle);
+            opMode.telemetry.addData("AccX: ", "%f", imu.getAcceleration().xAccel);
+            opMode.telemetry.addData("AccY: ", "%f", imu.getAcceleration().yAccel);
+            opMode.telemetry.update();
+        }
+
+        // Stop all motion
+        middle.setPower(0);
+
+        // Turn off RUN_TO_POSITION
+        middle.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        middle.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }

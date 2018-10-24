@@ -1,15 +1,12 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
-import com.disnodeteam.dogecv.detectors.JewelDetector;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.hardware.mecanum.Drivetrain;
-import org.firstinspires.ftc.teamcode.util.VisionManager;
+import org.firstinspires.ftc.teamcode.hardware.tankdrive.Drivetrain;
 
 import java.util.ArrayList;
 
-import static org.firstinspires.ftc.teamcode.FieldConstants.CRYPTO_COLUMN_WIDTH;
 
 
 /**
@@ -29,19 +26,16 @@ public class HardwareMain extends Mechanism {
     /**
      * Instance variable containing robot's acquirer.
      */
-    public Acquirer acquirer;
+    //public Acquirer acquirer;
     /**
      * Instance variable containing robot's arm.
      */
-    public Arm arm;
+    //public Arm arm;
     /**
-     * Instance variable containing robot's relic.
-     */
-    public Relic relic;
     /**
      * Instance variable containing robot's flipper.
      */
-    public Flipper flipper;
+    //public Flipper flipper;
 
     /* Miscellaneous mechanisms */
 
@@ -50,10 +44,10 @@ public class HardwareMain extends Mechanism {
      */
     public HardwareMain(){
         drivetrain = new Drivetrain();
-        acquirer = new Acquirer();
-        arm = new Arm();
-        relic = new Relic();
-        flipper = new Flipper();
+        //acquirer = new Acquirer();
+        //arm = new Arm();
+        //relic = new Relic();
+        //flipper = new Flipper();
     }
     /**
      * Overloaded constructor for HardwareMain. Calls the default constructor and sets the OpMode
@@ -64,10 +58,10 @@ public class HardwareMain extends Mechanism {
     public HardwareMain(LinearOpMode opMode){
         this.opMode = opMode;
         drivetrain = new Drivetrain(opMode);
-        acquirer = new Acquirer(opMode);
-        arm = new Arm(opMode);
-        relic = new Relic(opMode);
-        flipper = new Flipper(opMode);
+        //acquirer = new Acquirer(opMode);
+        //arm = new Arm(opMode);
+        //relic = new Relic(opMode);
+        //flipper = new Flipper(opMode);
     }
 
     /**
@@ -76,10 +70,10 @@ public class HardwareMain extends Mechanism {
      */
     public void init(HardwareMap hwMap) {
         drivetrain.init(hwMap);
-        acquirer.init(hwMap);
-        arm.init(hwMap);
-        relic.init(hwMap);
-        flipper.init(hwMap);
+        //acquirer.init(hwMap);
+        //arm.init(hwMap);
+        //relic.init(hwMap);
+        //flipper.init(hwMap);
     }
 
     /**
@@ -87,7 +81,7 @@ public class HardwareMain extends Mechanism {
      */
     public void waitForStart() {
         while (!opMode.isStarted()) {
-            opMode.telemetry.addData("Heading:", drivetrain.getHeading());
+            //opMode.telemetry.addData("Heading:", drivetrain.getHeading());
             opMode.telemetry.update();
         }
     }
@@ -100,6 +94,7 @@ public class HardwareMain extends Mechanism {
      *  @param visionManager    VisionManager containing the JewelDetector
      *  @param isAllianceRed    whether or not the robot is on the Red Alliance
      */
+    /*
     public void jewel(VisionManager visionManager, boolean isAllianceRed) {
 
         // Run only if opMode is not stopped
@@ -133,7 +128,7 @@ public class HardwareMain extends Mechanism {
         }
 
     }
-
+*/
     /**
      * Autonomous action for scoring a glyph. Uses the robot's distance sensor to detect the robot's
      * position using the cryptobox wall. Moves parallel to cryptobox until the target column is
@@ -143,6 +138,7 @@ public class HardwareMain extends Mechanism {
      *  @param targetCol      the cryptobox column that is being targeted (left is 0, center is 1, right is 2)
      *  @param isAllianceRed    whether or not the robot is on the Red Alliance
      */
+    /*
     public void scoreGlyphFar(int targetCol, boolean isAllianceRed) {
 
         int direction = isAllianceRed ? -1 : 1;
@@ -155,11 +151,11 @@ public class HardwareMain extends Mechanism {
         drivetrain.turn(-(direction - 1) * 90, 10); // 0 IF BLUE, 180 IF RED
 
         // score glyph
+        /**
         flipAndAlignGlyph();
 
     }
-
-    /**
+*//*
      * Autonomous action for scoring a glyph. Uses the robot's distance sensor to detect the robot's
      * position using the cryptobox wall. Moves parallel to cryptobox until the target column is
      * reached.
@@ -168,7 +164,7 @@ public class HardwareMain extends Mechanism {
      *  @param targetCol      the cryptobox column that is being targeted (left is 0, center is 1, right is 2)
      *  @param isAllianceRed    whether or not the robot is on the Red Alliance
      */
-    public void scoreGlyphNear(int targetCol, boolean isAllianceRed) {
+    /*public void scoreGlyphNear(int targetCol, boolean isAllianceRed) {
 
         int direction = isAllianceRed ? -1 : 1;
         relic.turnNeutral();
@@ -193,14 +189,14 @@ public class HardwareMain extends Mechanism {
         drivetrain.driveToPos(-6, 2.0);
         drivetrain.driveToPos(6, 2.0);
     }
-
+*/
     /**
      * Assumes that robot is in the safe zone after flipping and aligning. Finds and scores additional
      * glyphs into a different column.
      * @param initialCols
      * @param isAllianceRed
      * @return                  column scored in
-     */
+     *//*
     public int scoreAdditionalGlyphsFar(ArrayList<Integer> initialCols, boolean isAllianceRed) {
 
         // relative coordinates to desired point in glyph pit
@@ -245,14 +241,14 @@ public class HardwareMain extends Mechanism {
         return targetCol;
 
     }
-
+*/
     /**
      * Assumes that robot is in the safe zone after flipping and aligning. Finds and scores additional
      * glyphs into a different column.
      * @param initialCols
      * @param isAllianceRed
      * @return                  column scored in
-     */
+     *//*
     public int scoreAdditionalGlyphsNear(ArrayList<Integer> initialCols, boolean isAllianceRed) {
 
         drivetrain.driveToPos(-24, 5.0);
@@ -292,7 +288,7 @@ public class HardwareMain extends Mechanism {
         return targetCol;
 
     }
-
+*//*
     public void findGlyph(VisionManager visionManager) {
         while (opMode.opModeIsActive()) {
             opMode.telemetry.addData("Glyph Pos X:", visionManager.getGlyphPosX());
@@ -301,6 +297,6 @@ public class HardwareMain extends Mechanism {
             opMode.telemetry.update();
         }
     }
-
+*/
 }
 
