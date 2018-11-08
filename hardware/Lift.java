@@ -56,16 +56,16 @@ public class lift extends Mechanism {
     }
 
     public void upLift(){
-        liftLeft.setTargetPosition(liftLeft.getCurrentPosition()+hangHeight);
-        liftRight.setTargetPosition(liftRight.getCurrentPosition()+hangHeight);
+        liftLeft.setTargetPosition((int)(liftLeft.getCurrentPosition()+hangHeight));
+        liftRight.setTargetPosition((int)(liftRight.getCurrentPosition()+hangHeight));
         liftRight.setPower(liftSpeed);
         liftLeft.setPower(liftSpeed);
         liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void downLift(){
-        liftLeft.setTargetPosition(liftLeft.getCurrentPosition()-hangHeight);
-        liftRight.setTargetPosition(liftRight.getCurrentPosition()-hangHeight);
+        liftLeft.setTargetPosition((int)(liftLeft.getCurrentPosition()-hangHeight));
+        liftRight.setTargetPosition((int)(liftRight.getCurrentPosition()-hangHeight));
         liftRight.setPower(liftSpeed);
         liftLeft.setPower(liftSpeed);
         liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
