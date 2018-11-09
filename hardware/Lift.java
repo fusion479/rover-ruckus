@@ -6,8 +6,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.hardware.Mechanism;
 
-public class lift extends Mechanism {
+
+public class Lift extends Mechanism {
     private static final double     COUNTS_PER_MOTOR_REV    = 723.24;
     private static final double     SPROCKET_DIAMETER_INCHES   = 4.0;
     private static final double     COUNTS_PER_INCH         =
