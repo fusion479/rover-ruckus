@@ -32,7 +32,8 @@ public class Drivetrain extends Mechanism {
     /**
      * Ticks per revolution for a NeverRest 40.
      */
-    private static final double     COUNTS_PER_MOTOR_REV    = 723.24;
+    private static final double     COUNTS_PER_MOTOR_REV    = 26*28;
+    private static final double     COUNTS_PER_MOTOR_REV60  = 60*28;
     /**
      * Drivetrain gear ratio (< 1.0 if geared up).
      */
@@ -46,6 +47,8 @@ public class Drivetrain extends Mechanism {
      */
     private static final double     COUNTS_PER_INCH         =
             (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
+    private static final double     COUNTS_PER_INCH60         =
+            (COUNTS_PER_MOTOR_REV60 * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     /**
      * Drive speed when using encoders.
      */
@@ -270,7 +273,7 @@ public class Drivetrain extends Mechanism {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         // Calculate angle to turn
-        double angleToTurn = angle - angles.firstAngle;
+        double angleToTurn = (angle + angles.firstAngle)%360;
 
         // Reset the timeout time
         ElapsedTime runtime = new ElapsedTime();
@@ -356,5 +359,19 @@ public class Drivetrain extends Mechanism {
         // Turn off RUN_TO_POSITION
         middle.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         middle.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
+
+    public void setLeftPower(double power){
+        leftFront.setPower(power);
+        leftBack.setPower(power);
+    }
+    public void setRightPower(double power){
+        rightFront.setPower(power);
+        rightBack.setPower(power);
+    }
+
+    public void setMiddlePower(double power){
+        middle.setPower(power);
     }
 }

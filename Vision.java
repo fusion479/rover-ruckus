@@ -33,7 +33,7 @@ public class Vision {
         goldAlign.enable();
     }
 
-    public void init(HardwareMap hwMap) {
+    public void sampleInit(HardwareMap hwMap) {
 //        telemetry.addData("Status", "DogeCV 2018.0 - Sampling Order Example");
 
         order = new SamplingOrderDetector();

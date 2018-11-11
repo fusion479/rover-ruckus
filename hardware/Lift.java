@@ -6,29 +6,33 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.RoverRuckus.Constants;
 import org.firstinspires.ftc.teamcode.hardware.Mechanism;
 
 
 public class Lift extends Mechanism {
-    private static final double     COUNTS_PER_MOTOR_REV    = 723.24;
-    private static final double     SPROCKET_DIAMETER_INCHES   = 4.0;
+    private static final double     COUNTS_PER_MOTOR_REV    = 1120;
+    private static final double     SPROCKET_DIAMETER_INCHES   = 2.0;
     private static final double     COUNTS_PER_INCH         =
             (COUNTS_PER_MOTOR_REV) / (SPROCKET_DIAMETER_INCHES * 3.1415);
-    private static final double distance = 4;
-    private static final double hangHeight = distance*COUNTS_PER_INCH;
     private static final double liftSpeed = 0.5;
     private DcMotor liftRight;
     private DcMotor liftLeft;
     private DistanceSensor sensorRange;
     private Servo hook;
+    private boolean hasSensor;
     Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor)sensorRange;
 
     public void init(HardwareMap hwMap) {
+//        if (sensor){
+//            hasSensor = sensor;
+//            sensorRange = hwMap.get(DistanceSensor.class, "sensor_range");
+//        }
         liftLeft = hwMap.dcMotor.get("liftLeft");
         liftRight = hwMap.dcMotor.get("liftRight");
         hook = hwMap.servo.get("hook");
-        sensorRange = hwMap.get(DistanceSensor.class, "sensor_range");
-
         liftRight.setDirection(DcMotorSimple.Direction.FORWARD);
         liftLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -57,20 +61,44 @@ public class Lift extends Mechanism {
         setHook(0.5);
     }
 
-    public void upLift(){
-        liftLeft.setTargetPosition((int)(liftLeft.getCurrentPosition()+hangHeight));
-        liftRight.setTargetPosition((int)(liftRight.getCurrentPosition()+hangHeight));
-        liftRight.setPower(liftSpeed);
-        liftLeft.setPower(liftSpeed);
+    public void setLiftPower(double power){
+        liftLeft.setPower(power);
+        liftRight.setPower(power);
+    }
+
+    public void liftToPos(double distance){
+        liftRight.setTargetPosition((int)(liftRight.getCurrentPosition()+distance*COUNTS_PER_INCH));
+        liftLeft.setTargetPosition((int)(liftLeft.getCurrentPosition()+distance*COUNTS_PER_INCH));
         liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+/*
+    public void land(){
+        if (hasSensor){
+            while (sensorRange.getDistance(DistanceUnit.INCH)> Constants.bottomOfRobotToGround){
+                liftLeft.setPower(liftSpeed);
+                liftRight.setPower(liftSpeed);
+            }
+            liftRight.setPower(0);
+            liftLeft.setPower(0);
+        }
+        else {
+            liftLeft.setTargetPosition((int) (liftLeft.getCurrentPosition() + hangHeight));
+            liftRight.setTargetPosition((int) (liftRight.getCurrentPosition() + hangHeight));
+            liftRight.setPower(liftSpeed);
+            liftLeft.setPower(liftSpeed);
+            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
     }
     public void downLift(){
-        liftLeft.setTargetPosition((int)(liftLeft.getCurrentPosition()-hangHeight));
-        liftRight.setTargetPosition((int)(liftRight.getCurrentPosition()-hangHeight));
+        liftLeft.setTargetPosition(0);
+        liftRight.setTargetPosition(0);
         liftRight.setPower(liftSpeed);
         liftLeft.setPower(liftSpeed);
         liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
+*/
 }
