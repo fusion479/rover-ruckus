@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.RoverRuckus.Constants;
@@ -23,11 +24,11 @@ public class HardwareMain {
     public SampleArm arm;
     public org.firstinspires.ftc.teamcode.hardware.Lift lift;
 
-    public HardwareMain(){
-        drivetrain = new Drivetrain();
+    public HardwareMain(LinearOpMode opMode){
+        drivetrain = new Drivetrain(opMode);
         vision = new Vision();
         arm = new SampleArm();
-        lift = new org.firstinspires.ftc.teamcode.hardware.Lift();
+//        lift = new org.firstinspires.ftc.teamcode.hardware.Lift();
     }
     /**
      * Initializes all mechanisms on the robot.
@@ -37,12 +38,12 @@ public class HardwareMain {
         drivetrain.init(hwMap);
         drivetrain.encoderInit();
         vision.goldAlignInit(hwMap);
-        arm.init(hwMap);
-        lift.init(hwMap);
+//        arm.init(hwMap);
+//        lift.init(hwMap);
     }
 
     public void land(){
-        lift.liftToPos(Constants.hookHeight-Constants.robotHeight);
+        lift.liftToPos(7);
         drivetrain.strafeToPos(0.5,2,3);
     }
 
@@ -76,13 +77,13 @@ public class HardwareMain {
     }
 
     public void markerCloseCorner(){
-        drivetrain.turn(0.3,45,3);
+        drivetrain.turn(45,3);
         drivetrain.driveToPos(0.5,72,72,5);
         arm.armDown();
     }
 
     public void markerFarCorner(){
-        drivetrain.turn(0.3,-135,3);
+        drivetrain.turn(-135,3);
         drivetrain.driveToPos(0.5,72,72,5);
         arm.armDown();
     }
@@ -90,5 +91,11 @@ public class HardwareMain {
     public void park(){
         drivetrain.driveToPos(0.75,120,120,10);
     }
+
+    public void turn(){
+        drivetrain.turn(90,10);
+    }
+
+    public void forward(){drivetrain.driveToPos(0.5,24,24,10);}
 }
 

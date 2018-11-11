@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.hardware.Mechanism;
 
-public class Aquirer extends Mechanism {
+public class Acquirer extends Mechanism {
 
     @Override
     public void init(HardwareMap hwMap) {

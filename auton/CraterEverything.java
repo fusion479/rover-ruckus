@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.hardware.HardwareMain;
 
 @Autonomous(name = "Crater Single Sample", group = "Red")
 public class CraterEverything extends LinearOpMode {
-    private HardwareMain robot = new HardwareMain();;
+    private HardwareMain robot = new HardwareMain(this);;
     @Override
     public void runOpMode(){
         robot.init(hardwareMap);

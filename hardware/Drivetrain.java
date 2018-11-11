@@ -59,7 +59,7 @@ public class Drivetrain extends Mechanism {
     private static final double     TURN_SPEED              = 0.3;
 
     // Constant adjusting value for encoder driving
-    private static final double     PCONSTANT               = 0.1;
+    private static final double     PCONSTANT               = 0.01;
 
     /* Hardware members */
     private DcMotor leftFront;
@@ -110,7 +110,7 @@ public class Drivetrain extends Mechanism {
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        middle.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        middle.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         // Set all motors to zero power
         leftFront.setPower(0);
@@ -164,6 +164,20 @@ public class Drivetrain extends Mechanism {
         rightFront.setPower(right);
     }
 
+    public void drive(double x, double y, double turn) {
+        double r = Math.hypot(x, y);
+        double robotAngle = Math.atan2(y, x) - Math.PI / 4;
+        double v1 = r * Math.cos(robotAngle) + turn;
+        double v2 = r * Math.sin(robotAngle) - turn;
+        double v3 = r * Math.sin(robotAngle) + turn;
+        double v4 = r * Math.cos(robotAngle) - turn;
+
+        leftFront.setPower(v3); // v2
+        leftBack.setPower(v1); // v4
+        rightBack.setPower(v2); // v3
+        rightFront.setPower(v4); // v1
+    }
+
     /**
      * Drive to a relative position using encoders and an IMU.
      *
@@ -189,15 +203,19 @@ public class Drivetrain extends Mechanism {
         double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
         // Determine new target position, and pass to motor controller
-        newLeftTarget = leftFront.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
-        newRightTarget = rightFront.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
+        newLeftTarget = leftFront.getCurrentPosition() - (int) (leftInches * COUNTS_PER_INCH);
+        newRightTarget = rightFront.getCurrentPosition() - (int) (rightInches * COUNTS_PER_INCH);
         leftFront.setTargetPosition(newLeftTarget);
+        leftBack.setTargetPosition(newLeftTarget);
         rightFront.setTargetPosition(newRightTarget);
+        rightBack.setTargetPosition(newRightTarget);
 
         // Turn On RUN_TO_POSITION
         leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
+        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+/*
         // Reset the timeout time
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
@@ -218,13 +236,15 @@ public class Drivetrain extends Mechanism {
 
             // Set power of drivetrain motors accounting for adjustment
             leftFront.setPower(Math.abs(speed) + p);
+            leftBack.setPower(Math.abs(speed)+p);
             rightFront.setPower(Math.abs(speed) - p);
+            rightBack.setPower(Math.abs(speed)-p);
         }
 
         // Stop all motion
         leftFront.setPower(0);
         rightFront.setPower(0);
-
+*/
         // Turn off RUN_TO_POSITION
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -246,28 +266,25 @@ public class Drivetrain extends Mechanism {
      * @param angle         number of degrees to turn
      * @param timeoutS      amount of time before the move should stop
      */
-    public void turn(double speed, double angle, double timeoutS) {
-        // Get IMU angles
-        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-        // Calculate angle to turn
-        double angleToTurn = (angle + angles.firstAngle)%360;
-
-        // Reset the timeout time
+    public void turn(double angle, double timeoutS) {
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
 
         // Loop until a condition is met
-        while (opMode.opModeIsActive() && Math.abs(angleToTurn) > 0.5 && runtime.seconds() < timeoutS) {
+        while (opMode.opModeIsActive() && Math.abs(getError(angle)) > 1 && runtime.seconds() < timeoutS) {
 
-            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            angleToTurn = angle - angles.firstAngle;
+            double velocity = getError(angle) / 180 + 0.04 ; // this works
 
             // Set motor power according to calculated angle to turn
-            leftFront.setPower(-Math.signum(angleToTurn) * speed);
-            rightFront.setPower(Math.signum(angleToTurn) * speed);
-            leftBack.setPower(-Math.signum(angleToTurn) * speed);
-            rightBack.setPower(Math.signum(angleToTurn) * speed);
+            leftFront.setPower(velocity);
+            rightFront.setPower(-velocity);
+            leftBack.setPower(velocity);
+            rightBack.setPower(-velocity);
+
+            // Display heading for the driver
+            opMode.telemetry.addData("Heading: ", "%.2f : %.2f", angle, getHeading());
+            opMode.telemetry.addData("Velocity: ", "%.2f", velocity);
+            opMode.telemetry.update();
         }
 
         // Stop motor movement
@@ -275,6 +292,26 @@ public class Drivetrain extends Mechanism {
         rightFront.setPower(0);
         leftBack.setPower(0);
         rightBack.setPower(0);
+    }
+    private double getError(double targetAngle) {
+        double heading = getHeading();
+        if (targetAngle > heading) {
+            if (targetAngle - heading > 180) {
+                return 360 - Math.abs(targetAngle) - Math.abs(heading);
+            } else {
+                return targetAngle - heading;
+            }
+        } else {
+            if (targetAngle - heading > 180) {
+                return -(360 - Math.abs(targetAngle) - Math.abs(heading));
+            } else {
+                return heading - targetAngle;
+            }
+        }
+    }
+    public double getHeading() {
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return angles.firstAngle;
     }
     public void strafe(double power){
         middle.setPower(power);

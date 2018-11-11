@@ -13,12 +13,24 @@ public class HDrive extends LinearOpMode {
     public void runOpMode() {
         drivetrain.init(hardwareMap);
         drivetrain.encoderInit();
+        double leftPower;
+        double rightPower;
+        double drive;
+        double rotate;
+        waitForStart();
         while(opModeIsActive()){
-            leftPower = gamepad1.right_stick_y - gamepad1.right_stick_y;
-            rightPower = gamepad1.right_stick_y + gamepad1.right_stick_y;
+            drive = gamepad1.left_stick_y;
+            rotate = gamepad1.right_stick_x;
+            leftPower = drive + rotate;
+            rightPower = drive  - rotate;
             drivetrain.setLeftPower(leftPower);
             drivetrain.setRightPower(rightPower);
             drivetrain.strafe(gamepad1.left_stick_x);
         }
+//        waitForStart();
+//        while (opModeIsActive()){
+//            drivetrain.setRightPower(gamepad1.right_stick_y);
+//            drivetrain.setLeftPower(gamepad1.left_stick_y);
+//        }
     }
 }

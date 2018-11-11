@@ -33,8 +33,8 @@ public class Lift extends Mechanism {
         liftLeft = hwMap.dcMotor.get("liftLeft");
         liftRight = hwMap.dcMotor.get("liftRight");
         hook = hwMap.servo.get("hook");
-        liftRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        liftLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftLeft.setDirection(DcMotorSimple.Direction.FORWARD);
 
         liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
