@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.RoverRuckus.Constants;
 import org.firstinspires.ftc.teamcode.RoverRuckus.Vision;
+import org.firstinspires.ftc.teamcode.RoverRuckus.hardware.Drivetrain;
 import org.firstinspires.ftc.teamcode.RoverRuckus.hardware.SampleArm;
-import org.firstinspires.ftc.teamcode.hardware.tankdrive.Drivetrain;
-import org.firstinspires.ftc.teamcode.hardware.Lift;
-
 
 
 /**
@@ -24,13 +21,13 @@ public class HardwareMain {
     public Drivetrain drivetrain;
     public Vision vision;
     public SampleArm arm;
-    public Lift lift;
+    public org.firstinspires.ftc.teamcode.hardware.Lift lift;
 
     public HardwareMain(){
         drivetrain = new Drivetrain();
         vision = new Vision();
         arm = new SampleArm();
-        lift = new Lift();
+        lift = new org.firstinspires.ftc.teamcode.hardware.Lift();
     }
     /**
      * Initializes all mechanisms on the robot.

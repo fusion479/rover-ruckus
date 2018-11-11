@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.hardware.tankdrive;
+package org.firstinspires.ftc.teamcode.RoverRuckus.hardware;
 
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -219,28 +219,6 @@ public class Drivetrain extends Mechanism {
             // Set power of drivetrain motors accounting for adjustment
             leftFront.setPower(Math.abs(speed) + p);
             rightFront.setPower(Math.abs(speed) - p);
-
-                /*
-                if (leftInches < 0) {
-                    leftBack.setPower(-Math.abs(speed));
-                } else {
-                    leftBack.setPower(Math.abs(speed));
-                }
-                if (rightInches < 0) {
-                    rightBack.setPower(-Math.abs(speed));
-                } else {
-                    rightBack.setPower(Math.abs(speed));
-                }*/
-
-            // Display info for the driver.
-            opMode.telemetry.addData("Path1", "Running to %7d :%7d", newLeftTarget, newRightTarget);
-            opMode.telemetry.addData("Path2", "Running at %7d :%7d",
-                    leftFront.getCurrentPosition(),
-                    rightFront.getCurrentPosition());
-            opMode.telemetry.addData("Heading: ", "%f", gyroAngle);
-            opMode.telemetry.addData("AccX: ", "%f", imu.getAcceleration().xAccel);
-            opMode.telemetry.addData("AccY: ", "%f", imu.getAcceleration().yAccel);
-            opMode.telemetry.update();
         }
 
         // Stop all motion
@@ -290,10 +268,6 @@ public class Drivetrain extends Mechanism {
             rightFront.setPower(Math.signum(angleToTurn) * speed);
             leftBack.setPower(-Math.signum(angleToTurn) * speed);
             rightBack.setPower(Math.signum(angleToTurn) * speed);
-
-            // Display heading for the driver
-            opMode.telemetry.addData("Heading: ", "%f", angleToTurn);
-            opMode.telemetry.update();
         }
 
         // Stop motor movement
@@ -342,15 +316,6 @@ public class Drivetrain extends Mechanism {
             // Set power of drivetrain motors accounting for adjustment
             leftFront.setPower(p);
             rightFront.setPower(-p);
-
-            // Display info for the driver.
-            opMode.telemetry.addData("Path1", "Running to %7d", newTarget);
-            opMode.telemetry.addData("Path2", "Running at %7d",
-                    middle.getCurrentPosition());
-            opMode.telemetry.addData("Heading: ", "%f", gyroAngle);
-            opMode.telemetry.addData("AccX: ", "%f", imu.getAcceleration().xAccel);
-            opMode.telemetry.addData("AccY: ", "%f", imu.getAcceleration().yAccel);
-            opMode.telemetry.update();
         }
 
         // Stop all motion
@@ -369,9 +334,5 @@ public class Drivetrain extends Mechanism {
     public void setRightPower(double power){
         rightFront.setPower(power);
         rightBack.setPower(power);
-    }
-
-    public void setMiddlePower(double power){
-        middle.setPower(power);
     }
 }
