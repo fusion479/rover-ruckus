@@ -77,13 +77,13 @@ public class HardwareMain {
     }
 
     public void markerCloseCorner(){
-        drivetrain.turn(45,3);
+        drivetrain.turn(-45,3);
         drivetrain.driveToPos(0.5,72,72,5);
         arm.armDown();
     }
 
     public void markerFarCorner(){
-        drivetrain.turn(-135,3);
+        drivetrain.turn(135,3);
         drivetrain.driveToPos(0.5,72,72,5);
         arm.armDown();
     }
@@ -97,5 +97,15 @@ public class HardwareMain {
     }
 
     public void forward(){drivetrain.driveToPos(0.5,24,24,10);}
+
+    public void sampleTest(){
+        if (!vision.aligned()) {
+            drivetrain.driveToPos(0.3, 17, 17, 10);
+            if (!vision.aligned()) {
+                drivetrain.driveToPos(0.3, 17, 17, 10);
+            }
+        }
+        drivetrain.driveToPos(0.3,5,5,10);
+    }
 }
 

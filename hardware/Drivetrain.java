@@ -215,41 +215,16 @@ public class Drivetrain extends Mechanism {
         rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-/*
-        // Reset the timeout time
-        ElapsedTime runtime = new ElapsedTime();
-        runtime.reset();
-
-        // Loop until a condition is met
-        while (opMode.opModeIsActive() &&
-                (runtime.seconds() < timeoutS) &&
-                leftFront.isBusy() && rightFront.isBusy()) {
-
-            // Get IMU angles
-            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-            // Heading angle
-            double gyroAngle = angles.firstAngle;
-
-            // Adjustment factor for heading
-            double p = (gyroAngle - currentAngle) * PCONSTANT;
-
-            // Set power of drivetrain motors accounting for adjustment
-            leftFront.setPower(Math.abs(speed) + p);
-            leftBack.setPower(Math.abs(speed)+p);
-            rightFront.setPower(Math.abs(speed) - p);
-            rightBack.setPower(Math.abs(speed)-p);
-        }
-
-        // Stop all motion
-        leftFront.setPower(0);
-        rightFront.setPower(0);
-*/
         // Turn off RUN_TO_POSITION
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     /**
@@ -269,11 +244,16 @@ public class Drivetrain extends Mechanism {
     public void turn(double angle, double timeoutS) {
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
-
+        double velocity;
         // Loop until a condition is met
-        while (opMode.opModeIsActive() && Math.abs(getError(angle)) > 1 && runtime.seconds() < timeoutS) {
-
-            double velocity = getError(angle) / 180 + 0.04 ; // this works
+        while (opMode.opModeIsActive() && Math.abs(getError(angle)) > 2.5 && runtime.seconds() < timeoutS) {
+            velocity = getError(angle)/180;
+            if (velocity>0){
+                velocity += 0.02;
+            }
+            else{
+                velocity -= 0.02;
+            }
 
             // Set motor power according to calculated angle to turn
             leftFront.setPower(velocity);
