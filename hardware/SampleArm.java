@@ -7,12 +7,12 @@ import org.firstinspires.ftc.teamcode.hardware.Mechanism;
 
 public class SampleArm extends Mechanism {
 
-    private static final double upPosition = 1;
-    private static final double downPosition = 0.5;
+    private static final double upPosition = 0.5;
+    private static final double downPosition = 0;
     private Servo arm;
     @Override
     public void init(HardwareMap hwMap) {
-        arm = hwMap.get(Servo.class, "sampleArm");
+        arm = hwMap.get(Servo.class, "arm");
     }
     public void armUp(){
         arm.setPosition(upPosition);

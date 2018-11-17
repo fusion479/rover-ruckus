@@ -16,16 +16,16 @@ import org.firstinspires.ftc.teamcode.hardware.Lift;
  * This class contains autonomous actions involving multiple mechanisms. These actions
  * may be common to more than one routine.
  */
-public class HardwareMain {
+public class HardwareTank {
 
     /* Mechanisms */
     public Drivetrain drivetrain;
     public Vision vision;
     public SampleArm arm;
-    public  Lift lift;
+    public Lift lift;
     public LinearOpMode opMode;
 
-    public HardwareMain(LinearOpMode opMode){
+    public HardwareTank(LinearOpMode opMode){
         drivetrain = new Drivetrain(opMode);
         vision = new Vision();
         arm = new SampleArm();
@@ -44,13 +44,6 @@ public class HardwareMain {
         lift.init(hwMap);
     }
 
-    public void teleOpDrive(double drive, double rotate, double strafe){
-        double leftPower = drive + rotate;
-        double rightPower = drive  - rotate;
-        drivetrain.setLeftPower(leftPower);
-        drivetrain.setRightPower(rightPower);
-        drivetrain.strafe(strafe);
-    }
     public void land(){
         lift.unhook();
         lift.liftToPos(7);
@@ -60,41 +53,44 @@ public class HardwareMain {
     public void driveToSample(){
         drivetrain.driveToPos(0.5, Constants.landerToSample-Constants.robotLength,
                 Constants.landerToSample-Constants.robotLength, 5);
-        drivetrain.strafeToPos(0.5,15,5);
+        drivetrain.turn(90, 5);
+        drivetrain.driveToPos(0.5, -17, -17, 5);
     }
 
-    public void sampleStrafe(){
-        if (vision.aligned()){
-            drivetrain.driveToPos(0.5,2,2,3);
-            drivetrain.driveToPos(0.5,-2,-2,3);
-            drivetrain.strafeToPos(0.5,-34,5);
+    public void hitMineral(){
+        drivetrain.turn(-90, 5);
+        drivetrain.driveToPos(0.5,4,4,5);
+        drivetrain.driveToPos(0.5,4,-4,5);
+    }
+
+    public void sample(){
+        if(vision.aligned()){
+            hitMineral();
+            drivetrain.driveToPos(0.5,44,44,5);
         }
-        else {
-            drivetrain.strafeToPos(0.5, -17, 5);
-            if (vision.aligned()) {
-                drivetrain.driveToPos(0.5, 2, 2, 3);
-                drivetrain.driveToPos(0.5, -2, -2, 3);
-                drivetrain.strafeToPos(0.5, -17, 5);
-            } else {
-                drivetrain.strafeToPos(0.5, -17, 5);
-                if (vision.aligned()) {
-                    drivetrain.driveToPos(0.5, 2, 2, 3);
-                    drivetrain.driveToPos(0.5, -2, -2, 3);
-                }
+        else{
+            drivetrain.driveToPos(0.5,17,17,5);
+            if(vision.aligned()){
+                hitMineral();
+                drivetrain.driveToPos(0.5,27,27,5);
+            }
+            else {
+                drivetrain.driveToPos(0.5,17,17,5);
+                hitMineral();
+                drivetrain.driveToPos(0.5,10,10,5);
             }
         }
-        drivetrain.strafeToPos(0.5,9,5);
     }
 
 
-    public void markerCloseCorner(){
-        drivetrain.turn(135,3);
+    public void markerClose(){
+        drivetrain.turn(45,3);
         drivetrain.driveToPos(0.5,-72,-72,5);
         arm.armDown();
     }
 
-    public void markerFarCorner(){
-        drivetrain.turn(135,3);
+    public void markerFar(){
+        drivetrain.turn(45,3);
         drivetrain.driveToPos(0.5,72,72,5);
         arm.armDown();
     }
@@ -121,10 +117,6 @@ public class HardwareMain {
             }
         }
         drivetrain.driveToPos(0.3,5,5,10);
-    }
-
-    public void strafe(){
-        drivetrain.strafe(0.25);
     }
 }
 

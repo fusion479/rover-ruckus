@@ -143,10 +143,14 @@ public class Drivetrain extends Mechanism {
     public void encoderInit() {
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         middle.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         middle.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
@@ -203,11 +207,11 @@ public class Drivetrain extends Mechanism {
         double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
         // Determine new target position, and pass to motor controller
-        newLeftTarget = leftFront.getCurrentPosition() - (int) (leftInches * COUNTS_PER_INCH);
-        newRightTarget = rightFront.getCurrentPosition() - (int) (rightInches * COUNTS_PER_INCH);
+        newLeftTarget = leftFront.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
+        newRightTarget = rightFront.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
         leftFront.setTargetPosition(newLeftTarget);
-        leftBack.setTargetPosition(newLeftTarget);
         rightFront.setTargetPosition(newRightTarget);
+        leftBack.setTargetPosition(newLeftTarget);
         rightBack.setTargetPosition(newRightTarget);
 
         // Turn On RUN_TO_POSITION
@@ -215,12 +219,66 @@ public class Drivetrain extends Mechanism {
         rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // Reset the timeout time
+        ElapsedTime runtime = new ElapsedTime();
+        runtime.reset();
+
+        // Loop until a condition is met
+        while (opMode.opModeIsActive() &&
+                (runtime.seconds() < timeoutS) &&
+                leftFront.isBusy() && rightFront.isBusy() && leftBack.isBusy() && rightBack.isBusy())
+        {
+
+            // Get IMU angles
+            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+            // Heading angle
+            double gyroAngle = angles.firstAngle;
+
+            // Adjustment factor for heading
+            double p = (gyroAngle - currentAngle) * PCONSTANT;
+
+            // Set power of drivetrain motors accounting for adjustment
+            leftFront.setPower(Math.abs(speed) + p);
+            rightFront.setPower(Math.abs(speed) - p);
+            leftBack.setPower(Math.abs(speed) + p);
+            rightBack.setPower(Math.abs(speed) - p);
+
+                /*
+                if (leftInches < 0) {
+                    leftBack.setPower(-Math.abs(speed));
+                } else {
+                    leftBack.setPower(Math.abs(speed));
+                }
+                if (rightInches < 0) {
+                    rightBack.setPower(-Math.abs(speed));
+                } else {
+                    rightBack.setPower(Math.abs(speed));
+                }*/
+
+            // Display info for the driver.
+            opMode.telemetry.addData("Path1", "Running to %7d :%7d", newLeftTarget, newRightTarget);
+            opMode.telemetry.addData("Path2", "Running at %7d :%7d",
+                    leftFront.getCurrentPosition(),
+                    rightFront.getCurrentPosition());
+            opMode.telemetry.addData("Heading: ", "%f", gyroAngle);
+            opMode.telemetry.addData("AccX: ", "%f", imu.getAcceleration().xAccel);
+            opMode.telemetry.addData("AccY: ", "%f", imu.getAcceleration().yAccel);
+            opMode.telemetry.update();
+        }
+
+        // Stop all motion
+        leftFront.setPower(0);
+        rightFront.setPower(0);
+        leftBack.setPower(0);
+        rightBack.setPower(0);
+
         // Turn off RUN_TO_POSITION
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -244,16 +302,9 @@ public class Drivetrain extends Mechanism {
     public void turn(double angle, double timeoutS) {
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
-        double velocity;
-        // Loop until a condition is met
-        while (opMode.opModeIsActive() && Math.abs(getError(angle)) > 2.5 && runtime.seconds() < timeoutS) {
-            velocity = getError(angle)/180;
-            if (velocity>0){
-                velocity += 0.02;
-            }
-            else{
-                velocity -= 0.02;
-            }
+        while (opMode.opModeIsActive() && Math.abs(getError(angle)) > 1.5 && runtime.seconds() < timeoutS) {
+
+            double velocity = getError(angle) / 180 + 0.02; // this works
 
             // Set motor power according to calculated angle to turn
             leftFront.setPower(velocity);
@@ -273,6 +324,8 @@ public class Drivetrain extends Mechanism {
         leftBack.setPower(0);
         rightBack.setPower(0);
     }
+
+
     private double getError(double targetAngle) {
         double heading = getHeading();
         if (targetAngle > heading) {
@@ -292,6 +345,48 @@ public class Drivetrain extends Mechanism {
     public double getHeading() {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return angles.firstAngle;
+    }
+
+
+    public void turn2(double angle, double timeoutS) {
+        ElapsedTime runtime = new ElapsedTime();
+        runtime.reset();
+        while (opMode.opModeIsActive() && Math.abs(getError2(angle)) > 1.5 && runtime.seconds() < timeoutS) {
+
+            double velocity = getError2(angle) / 180 + 0.02; // this works
+
+            // Set motor power according to calculated angle to turn
+            leftFront.setPower(velocity);
+            rightFront.setPower(-velocity);
+            leftBack.setPower(velocity);
+            rightBack.setPower(-velocity);
+
+            // Display heading for the driver
+            opMode.telemetry.addData("Heading: ", "%.2f : %.2f", angle, getHeading());
+            opMode.telemetry.addData("Velocity: ", "%.2f", velocity);
+            opMode.telemetry.update();
+        }
+
+        // Stop motor movement
+        leftFront.setPower(0);
+        rightFront.setPower(0);
+        leftBack.setPower(0);
+        rightBack.setPower(0);
+    }
+
+    public double getHeading2() {
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return (angles.firstAngle+360)%360;
+    }
+
+    public double getError2(double targetAngle){
+        double angleError = 0;
+
+        angleError = (targetAngle - getHeading2());
+        angleError -= (360*Math.floor(0.5+((angleError)/360.0)));
+
+        return angleError;
+
     }
     public void strafe(double power){
         middle.setPower(power);

@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.hardware.Mechanism;
 
 public class TeamMarker extends Mechanism {
 
-    private static final double upPosition = 1;
+    private static final double upPosition = 0;
     private static final double downPosition = 0.5;
     private Servo arm;
     @Override

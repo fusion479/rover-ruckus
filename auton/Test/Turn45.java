@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RoverRuckus.auton;
+package org.firstinspires.ftc.teamcode.RoverRuckus.auton.Test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

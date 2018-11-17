@@ -32,7 +32,7 @@ public class Lift extends Mechanism {
 //        }
         liftLeft = hwMap.dcMotor.get("liftLeft");
         liftRight = hwMap.dcMotor.get("liftRight");
-        hook = hwMap.servo.get("hook");
+        hook = hwMap.servo.get("liftArm");
         liftRight.setDirection(DcMotorSimple.Direction.REVERSE);
         liftLeft.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -58,7 +58,7 @@ public class Lift extends Mechanism {
     }
 
     public  void unhook(){
-        setHook(0.5);
+        setHook(-0.5);
     }
 
     public void setLiftPower(double power){
@@ -72,25 +72,24 @@ public class Lift extends Mechanism {
         liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
-/*
+
     public void land(){
-        if (hasSensor){
-            while (sensorRange.getDistance(DistanceUnit.INCH)> Constants.bottomOfRobotToGround){
-                liftLeft.setPower(liftSpeed);
-                liftRight.setPower(liftSpeed);
-            }
-            liftRight.setPower(0);
-            liftLeft.setPower(0);
-        }
-        else {
-            liftLeft.setTargetPosition((int) (liftLeft.getCurrentPosition() + hangHeight));
-            liftRight.setTargetPosition((int) (liftRight.getCurrentPosition() + hangHeight));
+//        if (hasSensor){
+//            while (sensorRange.getDistance(DistanceUnit.INCH)> Constants.bottomOfRobotToGround){
+//                liftLeft.setPower(liftSpeed);
+//                liftRight.setPower(liftSpeed);
+//            }
+//            liftRight.setPower(0);
+//            liftLeft.setPower(0);
+//        }
+//        else {
+            liftLeft.setTargetPosition((int)(Constants.heightNeededToLift * COUNTS_PER_INCH));
+            liftRight.setTargetPosition((int)(Constants.heightNeededToLift * COUNTS_PER_INCH));
             liftRight.setPower(liftSpeed);
             liftLeft.setPower(liftSpeed);
             liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
             liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
+//        }
     }
     public void downLift(){
         liftLeft.setTargetPosition(0);
@@ -100,5 +99,5 @@ public class Lift extends Mechanism {
         liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
-*/
+
 }
