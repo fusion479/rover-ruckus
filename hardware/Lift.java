@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -18,8 +19,8 @@ public class Lift extends Mechanism {
     private static final double     COUNTS_PER_INCH         =
             (COUNTS_PER_MOTOR_REV) / (SPROCKET_DIAMETER_INCHES * 3.1415);
     private static final double liftSpeed = 0.5;
-    private DcMotor liftRight;
-    private DcMotor liftLeft;
+    public DcMotor liftRight;
+    public DcMotor liftLeft;
     private DistanceSensor sensorRange;
     private Servo hook;
     private boolean hasSensor;
@@ -32,7 +33,7 @@ public class Lift extends Mechanism {
 //        }
         liftLeft = hwMap.dcMotor.get("liftLeft");
         liftRight = hwMap.dcMotor.get("liftRight");
-        hook = hwMap.servo.get("liftArm");
+        hook = hwMap.servo.get("arm");
         liftRight.setDirection(DcMotorSimple.Direction.REVERSE);
         liftLeft.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -58,7 +59,7 @@ public class Lift extends Mechanism {
     }
 
     public  void unhook(){
-        setHook(-0.5);
+        setHook(0.5);
     }
 
     public void setLiftPower(double power){
@@ -66,9 +67,15 @@ public class Lift extends Mechanism {
         liftRight.setPower(power);
     }
 
-    public void liftToPos(double distance){
+    public void liftToPos(double distance, LinearOpMode opMode){
+        opMode.telemetry.addData("encoder", liftRight.getCurrentPosition());
+        opMode.telemetry.update();
+        opMode.sleep(2000);
         liftRight.setTargetPosition((int)(liftRight.getCurrentPosition()+distance*COUNTS_PER_INCH));
         liftLeft.setTargetPosition((int)(liftLeft.getCurrentPosition()+distance*COUNTS_PER_INCH));
+        opMode.telemetry.addData("encoder", liftRight.getCurrentPosition());
+        opMode.telemetry.update();
+        opMode.sleep(2000);
         liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }

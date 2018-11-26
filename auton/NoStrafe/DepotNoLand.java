@@ -9,10 +9,11 @@ public class DepotNoLand extends LinearOpMode {
     public HardwareTank robot = new HardwareTank(this);
     public void runOpMode(){
         robot.init(hardwareMap);
-        waitForStart();
-        robot.driveToSample();
-        robot.sample();
-        robot.markerClose();
-        robot.parkFar();
+        while (!opModeIsActive()&&!isStopRequested()) { telemetry.addData("Status", "Waiting in Init"); telemetry.update(); }
+//        waitForStart();
+        robot.drivetrain.driveToPos(0.5,60,60,10);
+        robot.arm.armDown();
+        robot.drivetrain.turn2(45,10);
+        robot.drivetrain.driveToPos(0.5,-140,-140, 10);
     }
 }

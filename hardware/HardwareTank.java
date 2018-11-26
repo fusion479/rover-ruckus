@@ -46,7 +46,7 @@ public class HardwareTank {
 
     public void land(){
         lift.unhook();
-        lift.liftToPos(7);
+        lift.liftToPos(7, opMode);
         drivetrain.strafeToPos(0.5,2,3);
     }
 

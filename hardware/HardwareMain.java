@@ -52,9 +52,20 @@ public class HardwareMain {
         drivetrain.strafe(strafe);
     }
     public void land(){
-        lift.unhook();
-        lift.liftToPos(7);
+        lift.liftToPos(-1,opMode);
+        arm.armUp();
+        lift.liftToPos(7, opMode);
         drivetrain.strafeToPos(0.5,2,3);
+    }
+
+    public void landJank(){
+        lift.setLiftPower(-1);
+        lift.unhook();
+        opMode.sleep(500);
+        lift.setLiftPower(0.5);
+        opMode.sleep(1000);
+        lift.setLiftPower(0);
+        drivetrain.strafeToPos(1,5,10);
     }
 
     public void driveToSample(){

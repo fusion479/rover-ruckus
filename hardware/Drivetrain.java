@@ -255,7 +255,8 @@ public class Drivetrain extends Mechanism {
                     rightBack.setPower(-Math.abs(speed));
                 } else {
                     rightBack.setPower(Math.abs(speed));
-                }*/
+                }
+                */
 
             // Display info for the driver.
             opMode.telemetry.addData("Path1", "Running to %7d :%7d", newLeftTarget, newRightTarget);
@@ -267,6 +268,8 @@ public class Drivetrain extends Mechanism {
             opMode.telemetry.addData("AccY: ", "%f", imu.getAcceleration().yAccel);
             opMode.telemetry.update();
         }
+
+
 
         // Stop all motion
         leftFront.setPower(0);
@@ -351,7 +354,7 @@ public class Drivetrain extends Mechanism {
     public void turn2(double angle, double timeoutS) {
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
-        while (opMode.opModeIsActive() && Math.abs(getError2(angle)) > 1.5 && runtime.seconds() < timeoutS) {
+        while (opMode.opModeIsActive() && Math.abs(getError2(angle)) > 2.5 && runtime.seconds() < timeoutS) {
 
             double velocity = getError2(angle) / 180 + 0.02; // this works
 
@@ -388,6 +391,7 @@ public class Drivetrain extends Mechanism {
         return angleError;
 
     }
+    
     public void strafe(double power){
         middle.setPower(power);
     }
