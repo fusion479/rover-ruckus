@@ -13,6 +13,5 @@ public class Land extends LinearOpMode {
         while (!opModeIsActive()&&!isStopRequested()) { telemetry.addData("Status", "Waiting in Init"); telemetry.update(); }
 //        waitForStart();
         robot.land();
-        robot.strafe();
     }
 }

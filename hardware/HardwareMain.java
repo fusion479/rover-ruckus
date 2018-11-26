@@ -49,13 +49,11 @@ public class HardwareMain {
         double rightPower = drive  - rotate;
         drivetrain.setLeftPower(leftPower);
         drivetrain.setRightPower(rightPower);
-        drivetrain.strafe(strafe);
     }
     public void land(){
         lift.liftToPos(-1,opMode);
         arm.armUp();
         lift.liftToPos(7, opMode);
-        drivetrain.strafeToPos(0.5,2,3);
     }
 
     public void landJank(){
@@ -65,37 +63,13 @@ public class HardwareMain {
         lift.setLiftPower(0.5);
         opMode.sleep(1000);
         lift.setLiftPower(0);
-        drivetrain.strafeToPos(1,5,10);
     }
 
     public void driveToSample(){
         drivetrain.driveToPos(0.5,
                 Constants.landerToSample-Constants.robotLength, 5);
-        drivetrain.strafeToPos(0.5,15,5);
     }
 
-    public void sampleStrafe(){
-        if (vision.aligned()){
-            drivetrain.driveToPos(0.5,2,3);
-            drivetrain.driveToPos(0.5,-2,3);
-            drivetrain.strafeToPos(0.5,-34,5);
-        }
-        else {
-            drivetrain.strafeToPos(0.5, -17, 5);
-            if (vision.aligned()) {
-                drivetrain.driveToPos(0.5, 2, 3);
-                drivetrain.driveToPos(0.5, -2, 3);
-                drivetrain.strafeToPos(0.5, -17, 5);
-            } else {
-                drivetrain.strafeToPos(0.5, -17, 5);
-                if (vision.aligned()) {
-                    drivetrain.driveToPos(0.5, 2, 3);
-                    drivetrain.driveToPos(0.5, -2, 3);
-                }
-            }
-        }
-        drivetrain.strafeToPos(0.5,9,5);
-    }
 
 
     public void markerCloseCorner(){
@@ -134,8 +108,5 @@ public class HardwareMain {
         drivetrain.driveToPos(0.3,5,10);
     }
 
-    public void strafe(){
-        drivetrain.strafe(0.25);
-    }
 }
 

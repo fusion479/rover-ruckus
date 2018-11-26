@@ -14,7 +14,6 @@ public class CraterNoLand extends LinearOpMode {
         while (!opModeIsActive()&&!isStopRequested()) { telemetry.addData("Status", "Waiting in Init"); telemetry.update(); }
 //        waitForStart();
         robot.driveToSample();
-        robot.sampleStrafe();
         robot.markerFarCorner();
         robot.parkClose();
     }

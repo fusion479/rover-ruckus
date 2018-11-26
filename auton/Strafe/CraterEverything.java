@@ -15,7 +15,6 @@ public class CraterEverything extends LinearOpMode {
 //        waitForStart();
         robot.land();
         robot.driveToSample();
-        robot.sampleStrafe();
         robot.markerFarCorner();
         robot.parkClose();
     }
