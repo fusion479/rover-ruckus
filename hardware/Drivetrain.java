@@ -220,6 +220,10 @@ public class Drivetrain extends Mechanism {
         leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        leftBack.setPower(0.5);
+        leftFront.setPower(0.5);
+        rightFront.setPower(0.5);
+        rightBack.setPower(0.5);
         // Reset the timeout time
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
@@ -240,23 +244,23 @@ public class Drivetrain extends Mechanism {
             double p = (gyroAngle - currentAngle) * PCONSTANT;
 
             // Set power of drivetrain motors accounting for adjustment
-            leftFront.setPower(Math.abs(speed) + p);
-            rightFront.setPower(Math.abs(speed) - p);
-            leftBack.setPower(Math.abs(speed) + p);
-            rightBack.setPower(Math.abs(speed) - p);
+//            leftFront.setPower(Math.abs(speed) + p);
+//            rightFront.setPower(Math.abs(speed) - p);
+//            leftBack.setPower(Math.abs(speed) + p);
+//            rightBack.setPower(Math.abs(speed) - p);
 
-                /*
-                if (leftInches < 0) {
-                    leftBack.setPower(-Math.abs(speed));
-                } else {
-                    leftBack.setPower(Math.abs(speed));
-                }
-                if (rightInches < 0) {
-                    rightBack.setPower(-Math.abs(speed));
-                } else {
-                    rightBack.setPower(Math.abs(speed));
-                }
-                */
+
+//                if (leftInches < 0) {
+//                    leftBack.setPower(-Math.abs(speed));
+//                } else {
+//                    leftBack.setPower(Math.abs(speed));
+//                }
+//                if (rightInches < 0) {
+//                    rightBack.setPower(-Math.abs(speed));
+//                } else {
+//                    rightBack.setPower(Math.abs(speed));
+//                }
+
 
             // Display info for the driver.
             opMode.telemetry.addData("Path1", "Running to %7d :%7d", newLeftTarget, newRightTarget);
@@ -268,6 +272,7 @@ public class Drivetrain extends Mechanism {
             opMode.telemetry.addData("AccY: ", "%f", imu.getAcceleration().yAccel);
             opMode.telemetry.update();
         }
+
 
 
 
