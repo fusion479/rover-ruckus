@@ -29,7 +29,6 @@ public class HDrive extends LinearOpMode {
             rightPower = drive  - rotate;
             drivetrain.setLeftPower(leftPower);
             drivetrain.setRightPower(rightPower);
-            drivetrain.strafe(gamepad1.left_stick_x);
             if (gamepad1.x){
                 arm.armDown();
             }

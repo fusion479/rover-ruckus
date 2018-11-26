@@ -15,7 +15,6 @@ public class DepotEverything extends LinearOpMode {
 //        waitForStart();
         robot.land();
         robot.driveToSample();
-        robot.sampleStrafe();
         robot.markerCloseCorner();
         robot.parkFar();
     }

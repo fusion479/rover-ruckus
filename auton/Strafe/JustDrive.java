@@ -10,6 +10,7 @@ public class JustDrive extends LinearOpMode {
     public void runOpMode(){
         robot.init(hardwareMap);
         while (!opModeIsActive()&&!isStopRequested()) { telemetry.addData("Status", "Waiting in Init"); telemetry.update(); }
+//        waitForStart();
         robot.drivetrain.driveToPos(0.5,80,5);
     }
 }

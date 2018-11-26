@@ -62,10 +62,10 @@ public class Drivetrain extends Mechanism {
     private static final double     PCONSTANT               = 0.01;
 
     /* Hardware members */
-    private DcMotor leftFront;
-    private DcMotor leftBack;
-    private DcMotor rightFront;
-    private DcMotor rightBack;
+    public DcMotor leftFront;
+    public DcMotor leftBack;
+    public DcMotor rightFront;
+    public DcMotor rightBack;
     private DcMotor middle;
     private BNO055IMU imu;
 
@@ -319,57 +319,9 @@ public class Drivetrain extends Mechanism {
         return angleError;
 
     }
-    
-    public void strafe(double power){
-        middle.setPower(power);
-    }
 
-    public void strafeToPos(double speed, double inches, double timeoutS) {
 
-        // Target position variables
-        int newTarget;
 
-        // Current heading angle of robot
-        double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-        // Determine new target position, and pass to motor controller
-        newTarget = middle.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
-        middle.setTargetPosition(newTarget);
-
-        // Turn On RUN_TO_POSITION
-        middle.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        // Reset the timeout time
-        ElapsedTime runtime = new ElapsedTime();
-        runtime.reset();
-
-        // Loop until a condition is met
-        while (opMode.opModeIsActive() &&
-                (runtime.seconds() < timeoutS) &&
-                middle.isBusy()) {
-
-            // Get IMU angles
-            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-            // Heading angle
-            double gyroAngle = angles.firstAngle;
-
-            // Adjustment factor for heading
-            double p = (gyroAngle - currentAngle) * PCONSTANT;
-
-            // Set power of drivetrain motors accounting for adjustment
-            leftFront.setPower(p);
-            rightFront.setPower(-p);
-        }
-
-        // Stop all motion
-        middle.setPower(0);
-
-        // Turn off RUN_TO_POSITION
-        middle.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        middle.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-    }
 
     public void setLeftPower(double power){
         leftFront.setPower(power);

@@ -11,7 +11,6 @@ public class land extends LinearOpMode {
         robot.init(hardwareMap);
         robot.lift.unhook();
         robot.landJank();
-        robot.drivetrain.strafeToPos(0.3,10,10);
         robot.drivetrain.driveToPos(0.5,80,5);
     }
 }

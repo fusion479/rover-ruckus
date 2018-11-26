@@ -11,7 +11,12 @@ public class HDriveWithLiftAndMarkerArm extends LinearOpMode {
         robot.init(hardwareMap);
         waitForStart();
         while (opModeIsActive()) {
-            telemetry.addData("encoderValue", robot.lift.liftLeft.getCurrentPosition());
+            telemetry.addData("liftLeft", robot.lift.liftLeft.getCurrentPosition());
+            telemetry.addData("liftRight", robot.lift.liftRight.getCurrentPosition());
+            telemetry.addData("leftFront", robot.drivetrain.leftFront.getCurrentPosition());
+            telemetry.addData("leftBack", robot.drivetrain.leftBack.getCurrentPosition());
+            telemetry.addData("rightFront", robot.drivetrain.rightFront.getCurrentPosition());
+            telemetry.addData("rightBack", robot.drivetrain.rightBack.getCurrentPosition());
             telemetry.update();
             robot.teleOpDrive(gamepad1.left_stick_y, -gamepad1.right_stick_x, -gamepad1.left_stick_x);
             if (gamepad1.dpad_up) {
