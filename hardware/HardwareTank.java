@@ -51,33 +51,33 @@ public class HardwareTank {
     }
 
     public void driveToSample(){
-        drivetrain.driveToPos(0.5, Constants.landerToSample-Constants.robotLength,
+        drivetrain.driveToPos(0.5,
                 Constants.landerToSample-Constants.robotLength, 5);
         drivetrain.turn(90, 5);
-        drivetrain.driveToPos(0.5, -17, -17, 5);
+        drivetrain.driveToPos(0.5, -17,  5);
     }
 
     public void hitMineral(){
         drivetrain.turn(-90, 5);
-        drivetrain.driveToPos(0.5,4,4,5);
-        drivetrain.driveToPos(0.5,4,-4,5);
+        drivetrain.driveToPos(0.5,4,5);
+        drivetrain.driveToPos(0.5,4,5);
     }
 
     public void sample(){
         if(vision.aligned()){
             hitMineral();
-            drivetrain.driveToPos(0.5,44,44,5);
+            drivetrain.driveToPos(0.5,44,5);
         }
         else{
-            drivetrain.driveToPos(0.5,17,17,5);
+            drivetrain.driveToPos(0.5,17,5);
             if(vision.aligned()){
                 hitMineral();
-                drivetrain.driveToPos(0.5,27,27,5);
+                drivetrain.driveToPos(0.5,27,5);
             }
             else {
-                drivetrain.driveToPos(0.5,17,17,5);
+                drivetrain.driveToPos(0.5,17,5);
                 hitMineral();
-                drivetrain.driveToPos(0.5,10,10,5);
+                drivetrain.driveToPos(0.5,10,5);
             }
         }
     }
@@ -85,38 +85,38 @@ public class HardwareTank {
 
     public void markerClose(){
         drivetrain.turn(45,3);
-        drivetrain.driveToPos(0.5,-72,-72,5);
+        drivetrain.driveToPos(0.5,-72,5);
         arm.armDown();
     }
 
     public void markerFar(){
         drivetrain.turn(45,3);
-        drivetrain.driveToPos(0.5,72,72,5);
+        drivetrain.driveToPos(0.5,72,5);
         arm.armDown();
     }
 
     public void parkClose(){
-        drivetrain.driveToPos(0.75,-120,-120,10);
+        drivetrain.driveToPos(0.75,-120,10);
     }
 
     public void parkFar(){
-        drivetrain.driveToPos(0.75,120,120,10);
+        drivetrain.driveToPos(0.75,120,10);
     }
 
     public void turn(){
         drivetrain.turn(90,10);
     }
 
-    public void forward(){drivetrain.driveToPos(0.5,24,24,10);}
+    public void forward(){drivetrain.driveToPos(0.5,24,10);}
 
     public void sampleTest(){
         if (!vision.aligned()) {
-            drivetrain.driveToPos(0.3, 17, 17, 10);
+            drivetrain.driveToPos(0.3, 17, 10);
             if (!vision.aligned()) {
-                drivetrain.driveToPos(0.3, 17, 17, 10);
+                drivetrain.driveToPos(0.3, 17,  10);
             }
         }
-        drivetrain.driveToPos(0.3,5,5,10);
+        drivetrain.driveToPos(0.3,5,10);
     }
 }
 

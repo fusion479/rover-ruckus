@@ -11,9 +11,9 @@ public class DepotNoLand extends LinearOpMode {
         robot.init(hardwareMap);
         while (!opModeIsActive()&&!isStopRequested()) { telemetry.addData("Status", "Waiting in Init"); telemetry.update(); }
 //        waitForStart();
-        robot.drivetrain.driveToPos(0.5,60,60,10);
+        robot.drivetrain.driveToPos(0.5,60,10);
         robot.arm.armDown();
         robot.drivetrain.turn2(45,10);
-        robot.drivetrain.driveToPos(0.5,-140,-140, 10);
+        robot.drivetrain.driveToPos(0.5,-140, 10);
     }
 }

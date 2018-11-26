@@ -197,7 +197,7 @@ public class Drivetrain extends Mechanism {
      * @param rightInches   number of inches to move on the right side
      * @param timeoutS      amount of time before the move should stop
      */
-    public void driveToPos(double speed, double leftInches, double rightInches, double timeoutS) {
+    public void driveToPos(double speed, double inches, double timeoutS) {
 
         // Target position variables
         int newLeftTarget;
@@ -207,8 +207,8 @@ public class Drivetrain extends Mechanism {
         double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
         // Determine new target position, and pass to motor controller
-        newLeftTarget = leftFront.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
-        newRightTarget = rightFront.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
+        newLeftTarget = leftFront.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
+        newRightTarget = rightFront.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
         leftFront.setTargetPosition(newLeftTarget);
         rightFront.setTargetPosition(newRightTarget);
         leftBack.setTargetPosition(newLeftTarget);
