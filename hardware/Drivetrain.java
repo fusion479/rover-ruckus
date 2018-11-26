@@ -200,15 +200,15 @@ public class Drivetrain extends Mechanism {
     public void driveToPos(double speed, double inches, double timeoutS) {
 
         // Target position variables
+        if (inches<0){
+            speed*=-1;
+        }
         int newLeftFront = (int)(leftFront.getCurrentPosition() + inches*COUNTS_PER_INCH);
-        double currentSpeed;
-        double difference = leftFront.getCurrentPosition() - newLeftFront;
-        while (Math.abs(difference)>3){
-            currentSpeed = speed * difference/inches*COUNTS_PER_INCH;
-            leftFront.setPower(currentSpeed);
-            leftBack.setPower(currentSpeed);
-            rightBack.setPower(currentSpeed);
-            rightFront.setPower(currentSpeed);
+        while (Math.abs(leftFront.getCurrentPosition() - newLeftFront)>3){
+            leftFront.setPower(speed);
+            leftBack.setPower(speed);
+            rightBack.setPower(speed);
+            rightFront.setPower(speed);
         }
         leftFront.setPower(0);
         leftBack.setPower(0);
