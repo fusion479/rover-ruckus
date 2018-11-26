@@ -200,92 +200,20 @@ public class Drivetrain extends Mechanism {
     public void driveToPos(double speed, double inches, double timeoutS) {
 
         // Target position variables
-        int newLeftTarget;
-        int newRightTarget;
-
-        // Current heading angle of robot
-        double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-        // Determine new target position, and pass to motor controller
-        newLeftTarget = leftFront.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
-        newRightTarget = rightFront.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
-        leftFront.setTargetPosition(newLeftTarget);
-        rightFront.setTargetPosition(newRightTarget);
-        leftBack.setTargetPosition(newLeftTarget);
-        rightBack.setTargetPosition(newRightTarget);
-
-        // Turn On RUN_TO_POSITION
-        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        // Reset the timeout time
-        ElapsedTime runtime = new ElapsedTime();
-        runtime.reset();
-
-        // Loop until a condition is met
-        while (opMode.opModeIsActive() &&
-                (runtime.seconds() < timeoutS) &&
-                leftFront.isBusy() && rightFront.isBusy() && leftBack.isBusy() && rightBack.isBusy())
-        {
-
-            // Get IMU angles
-            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-            // Heading angle
-            double gyroAngle = angles.firstAngle;
-
-            // Adjustment factor for heading
-            double p = (gyroAngle - currentAngle) * PCONSTANT;
-
-            // Set power of drivetrain motors accounting for adjustment
-            leftFront.setPower(Math.abs(speed) + p);
-            rightFront.setPower(Math.abs(speed) - p);
-            leftBack.setPower(Math.abs(speed) + p);
-            rightBack.setPower(Math.abs(speed) - p);
-
-                /*
-                if (leftInches < 0) {
-                    leftBack.setPower(-Math.abs(speed));
-                } else {
-                    leftBack.setPower(Math.abs(speed));
-                }
-                if (rightInches < 0) {
-                    rightBack.setPower(-Math.abs(speed));
-                } else {
-                    rightBack.setPower(Math.abs(speed));
-                }
-                */
-
-            // Display info for the driver.
-            opMode.telemetry.addData("Path1", "Running to %7d :%7d", newLeftTarget, newRightTarget);
-            opMode.telemetry.addData("Path2", "Running at %7d :%7d",
-                    leftFront.getCurrentPosition(),
-                    rightFront.getCurrentPosition());
-            opMode.telemetry.addData("Heading: ", "%f", gyroAngle);
-            opMode.telemetry.addData("AccX: ", "%f", imu.getAcceleration().xAccel);
-            opMode.telemetry.addData("AccY: ", "%f", imu.getAcceleration().yAccel);
-            opMode.telemetry.update();
+        int newLeftFront = (int)(leftFront.getCurrentPosition() + inches*COUNTS_PER_INCH);
+        double currentSpeed;
+        double difference = leftFront.getCurrentPosition() - newLeftFront;
+        while (Math.abs(difference)>3){
+            currentSpeed = speed * difference/inches*COUNTS_PER_INCH;
+            leftFront.setPower(currentSpeed);
+            leftBack.setPower(currentSpeed);
+            rightBack.setPower(currentSpeed);
+            rightFront.setPower(currentSpeed);
         }
-
-
-
-        // Stop all motion
         leftFront.setPower(0);
-        rightFront.setPower(0);
         leftBack.setPower(0);
         rightBack.setPower(0);
-
-        // Turn off RUN_TO_POSITION
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setPower(0);
     }
 
     /**
