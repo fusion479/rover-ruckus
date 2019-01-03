@@ -7,14 +7,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import org.firstinspires.ftc.teamcode.RoverRuckus.PIDController;
 import org.firstinspires.ftc.teamcode.hardware.Mechanism;
 
 /**
@@ -33,7 +31,6 @@ public class Drivetrain extends Mechanism {
      * Ticks per revolution for a NeverRest 40.
      */
     private static final double     COUNTS_PER_MOTOR_REV    = 26*28;
-    private static final double     COUNTS_PER_MOTOR_REV60  = 60*28;
     /**
      * Drivetrain gear ratio (< 1.0 if geared up).
      */
@@ -47,27 +44,18 @@ public class Drivetrain extends Mechanism {
      */
     private static final double     COUNTS_PER_INCH         =
             (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
-    private static final double     COUNTS_PER_INCH60         =
-            (COUNTS_PER_MOTOR_REV60 * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
-    /**
-     * Drive speed when using encoders.
-     */
-    private static final double     DRIVE_SPEED             = 0.4;
-    /**
-     * Turn speed when using encoders.
-     */
-    private static final double     TURN_SPEED              = 0.3;
 
-    // Constant adjusting value for encoder driving
-    private static final double     PCONSTANT               = 0.01;
 
     /* Hardware members */
     public DcMotor leftFront;
     public DcMotor leftBack;
     public DcMotor rightFront;
     public DcMotor rightBack;
-    private DcMotor middle;
     private BNO055IMU imu;
+    PIDController pidRotate, pidDrive;
+    double  globalAngle, power = .30, correction;
+    Orientation lastAngles = new Orientation();
+
 
 
     /**
@@ -96,35 +84,31 @@ public class Drivetrain extends Mechanism {
         leftBack = hwMap.dcMotor.get("leftBack");
         rightFront = hwMap.dcMotor.get("rightFront");
         rightBack = hwMap.dcMotor.get("rightBack");
-        middle = hwMap.dcMotor.get("middle");
 
         // Set motor direction (AndyMark configuration)
         leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
         leftBack.setDirection(DcMotorSimple.Direction.FORWARD);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        middle.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Set motor brake behavior
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        middle.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         // Set all motors to zero power
         leftFront.setPower(0);
         leftBack.setPower(0);
         rightFront.setPower(0);
         rightBack.setPower(0);
-        middle.setPower(0);
 
         // Initialize IMU with parameters
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
+        parameters.loggingEnabled      = false;
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
@@ -132,8 +116,14 @@ public class Drivetrain extends Mechanism {
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        // Start the logging of measured acceleration
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+        pidRotate = new PIDController(.005, 0, 0);
+        // Set PID proportional value to produce non-zero correction value when robot veers off
+        // straight line. P value controls how sensitive the correction is.
+        pidDrive = new PIDController(.05, 0, 0);
+        pidDrive.setSetpoint(0);
+        pidDrive.setOutputRange(0, power);
+        pidDrive.setInputRange(-90, 90);
+        pidDrive.enable();
     }
 
     /**
@@ -145,13 +135,11 @@ public class Drivetrain extends Mechanism {
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        middle.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        middle.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 
@@ -193,8 +181,6 @@ public class Drivetrain extends Mechanism {
      * </ul>
      *
      * @param speed         maximum power of drivetrain motors when driving
-     * @param leftInches    number of inches to move on the left side
-     * @param rightInches   number of inches to move on the right side
      * @param timeoutS      amount of time before the move should stop
      */
     public void driveToPos(double speed, double inches, double timeoutS) {
@@ -204,11 +190,12 @@ public class Drivetrain extends Mechanism {
             speed*=-1;
         }
         int newLeftFront = (int)(leftFront.getCurrentPosition() + inches*COUNTS_PER_INCH);
+        leftFront.setPower(speed);
+        leftBack.setPower(speed);
+        rightBack.setPower(speed);
+        rightFront.setPower(speed);
         while (Math.abs(leftFront.getCurrentPosition() - newLeftFront)>3){
-            leftFront.setPower(speed);
-            leftBack.setPower(speed);
-            rightBack.setPower(speed);
-            rightFront.setPower(speed);
+            opMode.telemetry.addData("Current Position", leftFront.getCurrentPosition());
         }
         leftFront.setPower(0);
         leftBack.setPower(0);
@@ -217,110 +204,115 @@ public class Drivetrain extends Mechanism {
     }
 
     /**
-     * Turn to a specified angle using an IMU.
-     *
-     * Robot will stop moving if any of three conditions occur:
-     * <li>
-     *  <ol>Move gets to the desired angle</ol>
-     *  <ol>Move runs out of time</ol>
-     *  <ol>Driver stops the running OpMode</ol>
-     * </li>
-     *
-     * @param speed         maximum power of drivetrain motors when driving
-     * @param angle         number of degrees to turn
-     * @param timeoutS      amount of time before the move should stop
+     * Resets the cumulative angle tracking to zero.
      */
-    public void turn(double angle, double timeoutS) {
-        ElapsedTime runtime = new ElapsedTime();
-        runtime.reset();
-        while (opMode.opModeIsActive() && Math.abs(getError(angle)) > 1.5 && runtime.seconds() < timeoutS) {
+    public void resetAngle()
+    {
+        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-            double velocity = getError(angle) / 180 + 0.02; // this works
-
-            // Set motor power according to calculated angle to turn
-            leftFront.setPower(velocity);
-            rightFront.setPower(-velocity);
-            leftBack.setPower(velocity);
-            rightBack.setPower(-velocity);
-
-            // Display heading for the driver
-            opMode.telemetry.addData("Heading: ", "%.2f : %.2f", angle, getHeading());
-            opMode.telemetry.addData("Velocity: ", "%.2f", velocity);
-            opMode.telemetry.update();
-        }
-
-        // Stop motor movement
-        leftFront.setPower(0);
-        rightFront.setPower(0);
-        leftBack.setPower(0);
-        rightBack.setPower(0);
+        globalAngle = 0;
     }
 
+    /**
+     * Get current cumulative angle rotation from last reset.
+     * @return Angle in degrees. + = left, - = right from zero point.
+     */
+    public double getAngle()
+    {
+        // We experimentally determined the Z axis is the axis we want to use for heading angle.
+        // We have to process the angle because the imu works in euler angles so the Z axis is
+        // returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
+        // 180 degrees. We detect this transition and track the total cumulative angle of rotation.
 
-    private double getError(double targetAngle) {
-        double heading = getHeading();
-        if (targetAngle > heading) {
-            if (targetAngle - heading > 180) {
-                return 360 - Math.abs(targetAngle) - Math.abs(heading);
-            } else {
-                return targetAngle - heading;
-            }
-        } else {
-            if (targetAngle - heading > 180) {
-                return -(360 - Math.abs(targetAngle) - Math.abs(heading));
-            } else {
-                return heading - targetAngle;
-            }
-        }
-    }
-    public double getHeading() {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return angles.firstAngle;
+
+        double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
+
+        if (deltaAngle < -180)
+            deltaAngle += 360;
+        else if (deltaAngle > 180)
+            deltaAngle -= 360;
+
+        globalAngle += deltaAngle;
+
+        lastAngles = angles;
+
+        return globalAngle;
     }
 
+    /**
+     * Rotate left or right the number of degrees. Does not support turning more than 180 degrees.
+     * @param degrees Degrees to turn, + is left - is right
+     */
+    public void turn(int degrees, double power)
+    {
+        // restart imu angle tracking.
+        resetAngle();
 
-    public void turn2(double angle, double timeoutS) {
-        ElapsedTime runtime = new ElapsedTime();
-        runtime.reset();
-        while (opMode.opModeIsActive() && Math.abs(getError2(angle)) > 2.5 && runtime.seconds() < timeoutS) {
+        // start pid controller. PID controller will monitor the turn angle with respect to the
+        // target angle and reduce power as we approach the target angle with a minimum of 20%.
+        // This is to prevent the robots momentum from overshooting the turn after we turn off the
+        // power. The PID controller reports onTarget() = true when the difference between turn
+        // angle and target angle is within 2% of target (tolerance). This helps prevent overshoot.
+        // The minimum power is determined by testing and must enough to prevent motor stall and
+        // complete the turn. Note: if the gap between the starting power and the stall (minimum)
+        // power is small, overshoot may still occur. Overshoot is dependant on the motor and
+        // gearing configuration, starting power, weight of the robot and the on target tolerance.
 
-            double velocity = getError2(angle) / 180 + 0.02; // this works
+        pidRotate.reset();
+        pidRotate.setSetpoint(degrees);
+        pidRotate.setInputRange(0, 90);
+        pidRotate.setOutputRange(.20, power);
+        pidRotate.setTolerance(2);
+        pidRotate.enable();
 
-            // Set motor power according to calculated angle to turn
-            leftFront.setPower(velocity);
-            rightFront.setPower(-velocity);
-            leftBack.setPower(velocity);
-            rightBack.setPower(-velocity);
+        // getAngle() returns + when rotating counter clockwise (left) and - when rotating
+        // clockwise (right).
 
-            // Display heading for the driver
-            opMode.telemetry.addData("Heading: ", "%.2f : %.2f", angle, getHeading());
-            opMode.telemetry.addData("Velocity: ", "%.2f", velocity);
-            opMode.telemetry.update();
+        // rotate until turn is completed.
+
+        if (degrees < 0)
+        {
+            // On right turn we have to get off zero first.
+            while (getAngle() == 0)
+            {
+                leftFront.setPower(-power);
+                leftBack.setPower(-power);
+                rightFront.setPower(power);
+                rightBack.setPower(power);
+            }
+
+            do
+            {
+                power = pidRotate.performPID(getAngle()); // power will be - on right turn.
+                leftFront.setPower(power);
+                leftBack.setPower(power);
+                rightFront.setPower(-power);
+                rightBack.setPower(-power);
+            } while (!pidRotate.onTarget());
         }
+        else    // left turn.
+            do
+            {
+                power = pidRotate.performPID(getAngle()); // power will be + on left turn.
+                leftFront.setPower(power);
+                leftBack.setPower(power);
+                rightFront.setPower(-power);
+                rightBack.setPower(-power);
+            } while (!pidRotate.onTarget());
 
-        // Stop motor movement
+        // turn the motors off.
         leftFront.setPower(0);
-        rightFront.setPower(0);
         leftBack.setPower(0);
+        rightFront.setPower(0);
         rightBack.setPower(0);
+
+        // wait for rotation to stop.
+//        sleep(500);
+
+        // reset angle tracking on new heading.
+        resetAngle();
     }
-
-    public double getHeading2() {
-        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return (angles.firstAngle+360)%360;
-    }
-
-    public double getError2(double targetAngle){
-        double angleError = 0;
-
-        angleError = (targetAngle - getHeading2());
-        angleError -= (360*Math.floor(0.5+((angleError)/360.0)));
-
-        return angleError;
-
-    }
-
-
 
 
     public void setLeftPower(double power){

@@ -13,7 +13,7 @@ public class DepotNoLand extends LinearOpMode {
 //        waitForStart();
         robot.drivetrain.driveToPos(0.5,60,10);
         robot.arm.armDown();
-        robot.drivetrain.turn2(45,10);
+//        robot.drivetrain.turn2(45,10);
         robot.drivetrain.driveToPos(0.5,-140, 10);
     }
 }
