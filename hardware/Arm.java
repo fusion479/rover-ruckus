@@ -41,10 +41,10 @@ public class Arm extends Mechanism {
         opMode.telemetry.addData("encoder", armRight.getCurrentPosition());
         opMode.telemetry.update();
         opMode.sleep(2000);
-        armRight.setTargetPosition(distance);
-        armLeft.setTargetPosition(distance);
-        armLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        armRight.setTargetPosition(distance);
+//        armLeft.setTargetPosition(distance);
+//       armLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        armRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void armOrigin(){
