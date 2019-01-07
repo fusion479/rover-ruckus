@@ -31,6 +31,7 @@ public class HardwareMain {
         arm = new SampleArm();
         this.opMode = opMode;
         lift = new Lift();
+        acquireArm = new Arm();
     }
     /**
      * Initializes all mechanisms on the robot.
@@ -42,6 +43,7 @@ public class HardwareMain {
         vision.goldAlignInit(hwMap);
         arm.init(hwMap);
         lift.init(hwMap);
+        acquireArm.init(hwMap);
     }
 
     public void teleOpDrive(double drive, double rotate, double strafe){
