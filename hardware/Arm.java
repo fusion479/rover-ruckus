@@ -37,7 +37,7 @@ public class Arm extends Mechanism {
         armRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void armTarget(double distance, LinearOpMode opMode){
+    public void armTarget(double distance){
         opMode.telemetry.addData("encoder", armRight.getCurrentPosition());
         opMode.telemetry.update();
         opMode.sleep(2000);
