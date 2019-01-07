@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.Vision;
 import org.firstinspires.ftc.teamcode.RoverRuckus.hardware.Drivetrain;
 import org.firstinspires.ftc.teamcode.RoverRuckus.hardware.SampleArm;
 import org.firstinspires.ftc.teamcode.hardware.Lift;
+import org.firstinspires.ftc.teamcode.hardware.Arm;
 
 /**
  * HardwareTank is the class that is used to define all of the hardware for a single robot. In this
@@ -24,6 +25,7 @@ public class HardwareMain {
     public SampleArm arm;
     public  Lift lift;
     public LinearOpMode opMode;
+    public Arm acquireArm;
 
     public HardwareMain(LinearOpMode opMode){
         drivetrain = new Drivetrain(opMode);
