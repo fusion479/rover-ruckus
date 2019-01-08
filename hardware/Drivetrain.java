@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -156,51 +157,52 @@ public class Drivetrain extends Mechanism {
         rightFront.setPower(right);
     }
 
-    public void drive(double x, double y, double turn) {
-        double r = Math.hypot(x, y);
-        double robotAngle = Math.atan2(y, x) - Math.PI / 4;
-        double v1 = r * Math.cos(robotAngle) + turn;
-        double v2 = r * Math.sin(robotAngle) - turn;
-        double v3 = r * Math.sin(robotAngle) + turn;
-        double v4 = r * Math.cos(robotAngle) - turn;
-
-        leftFront.setPower(v3); // v2
-        leftBack.setPower(v1); // v4
-        rightBack.setPower(v2); // v3
-        rightFront.setPower(v4); // v1
-    }
-
-    /**
-     * Drive to a relative position using encoders and an IMU.
-     *
-     * Robot will stop moving if any of three conditions occur:
-     * <ul>
-     *  <li>Move gets to the desired position</li>
-     *  <li>Move runs out of time</li>
-     *  <li>Driver stops the running OpMode</li>
-     * </ul>
-     *
-     * @param speed         maximum power of drivetrain motors when driving
-     * @param timeoutS      amount of time before the move should stop
-     */
     public void driveToPos(double speed, double inches, double timeoutS) {
 
-        // Target position variables
-        if (inches<0){
-            speed*=-1;
-        }
+
         int newLeftFront = (int)(leftFront.getCurrentPosition() + inches*COUNTS_PER_INCH);
-        leftFront.setPower(speed);
-        leftBack.setPower(speed);
-        rightBack.setPower(speed);
-        rightFront.setPower(speed);
         while (Math.abs(leftFront.getCurrentPosition() - newLeftFront)>3){
             opMode.telemetry.addData("Current Position", leftFront.getCurrentPosition());
         }
-        leftFront.setPower(0);
-        leftBack.setPower(0);
-        rightBack.setPower(0);
-        rightFront.setPower(0);
+        int newLeftTarget;
+        int newRightTarget;
+
+        // Current heading angle of robot
+        double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+
+        // Determine new target position, and pass to motor controller
+        newLeftTarget = leftFront.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
+        newRightTarget = rightFront.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
+        leftFront.setTargetPosition(newLeftTarget);
+        rightFront.setTargetPosition(newRightTarget);
+        leftBack.setTargetPosition(newLeftTarget);
+        rightBack.setTargetPosition(newRightTarget);
+
+        setRightPower(speed);
+        setLeftPower(speed);
+
+        // Turn On RUN_TO_POSITION
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // Reset the timeout time
+        ElapsedTime runtime = new ElapsedTime();
+        runtime.reset();
+
+        // Loop until a condition is met
+        while (opMode.opModeIsActive() &&
+                (runtime.seconds() < timeoutS) &&
+                leftFront.isBusy() && rightFront.isBusy() && leftBack.isBusy() && rightBack.isBusy())
+        {
+            correction = pidDrive.performPID(getAngle());
+            setLeftPower(-power + correction);
+            setRightPower(-power);
+        }
+        // Stop all motion
+        setLeftPower(0);
+        setRightPower(0);
     }
 
     /**
@@ -309,7 +311,6 @@ public class Drivetrain extends Mechanism {
 
         // wait for rotation to stop.
 //        sleep(500);
-
         // reset angle tracking on new heading.
         resetAngle();
     }
@@ -322,5 +323,12 @@ public class Drivetrain extends Mechanism {
     public void setRightPower(double power){
         rightFront.setPower(power);
         rightBack.setPower(power);
+    }
+
+    public void sendTelemetry(){
+        opMode.telemetry.addData("leftBack", leftBack.getCurrentPosition());
+        opMode.telemetry.addData("leftFront", leftFront.getCurrentPosition());
+        opMode.telemetry.addData("rightBack", rightBack.getCurrentPosition());
+        opMode.telemetry.addData("rightFront", rightFront.getCurrentPosition());
     }
 }

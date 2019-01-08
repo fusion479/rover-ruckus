@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.Vision;
 import org.firstinspires.ftc.teamcode.RoverRuckus.hardware.Drivetrain;
 import org.firstinspires.ftc.teamcode.RoverRuckus.hardware.SampleArm;
 import org.firstinspires.ftc.teamcode.hardware.Lift;
+import org.firstinspires.ftc.teamcode.hardware.Arm;
 
 /**
  * HardwareTank is the class that is used to define all of the hardware for a single robot. In this
@@ -24,6 +25,7 @@ public class HardwareMain {
     public SampleArm arm;
     public  Lift lift;
     public LinearOpMode opMode;
+    public Arm acquireArm;
 
     public HardwareMain(LinearOpMode opMode){
         drivetrain = new Drivetrain(opMode);
@@ -31,6 +33,7 @@ public class HardwareMain {
         arm = new SampleArm();
         this.opMode = opMode;
         lift = new Lift();
+        acquireArm = new Arm();
     }
     /**
      * Initializes all mechanisms on the robot.
@@ -42,6 +45,7 @@ public class HardwareMain {
         vision.goldAlignInit(hwMap);
         arm.init(hwMap);
         lift.init(hwMap);
+        acquireArm.init(hwMap);
     }
 
     public void teleOpDrive(double drive, double rotate, double strafe){
@@ -69,6 +73,10 @@ public class HardwareMain {
         drivetrain.driveToPos(0.5,
                 Constants.landerToSample-Constants.robotLength, 5);
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 
 
     public void markerCloseCorner(){
@@ -106,5 +114,9 @@ public class HardwareMain {
         }
         drivetrain.driveToPos(0.3,5,10);
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 }
 
