@@ -4,13 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RoverRuckus.hardware.Drivetrain;
-import org.firstinspires.ftc.teamcode.RoverRuckus.hardware.Arm;
 
 @TeleOp(name = "ArmTest", group = "Test")
 public class ArmTest extends LinearOpMode {
     private Drivetrain drivetrain = new Drivetrain();
 //    private Lift lift = new Lift();
-    private Arm acquireArm = new Arm();
+    private org.firstinspires.ftc.teamcode.hardware.Arm acquireArm = new org.firstinspires.ftc.teamcode.hardware.Arm();
     @Override
     public void runOpMode() {
         drivetrain.init(hardwareMap);
@@ -28,32 +27,16 @@ public class ArmTest extends LinearOpMode {
             rightPower = drive  - rotate;
             drivetrain.setLeftPower(leftPower);
             drivetrain.setRightPower(rightPower);
+            telemetry.addData("encoder Right", acquireArm.armRight.getCurrentPosition());
+            telemetry.addData("encoder Left", acquireArm.armRight.getCurrentPosition());
+            telemetry.update();
             if (gamepad1.b){
-              acquireArm.armTarget();
-            }
-            if (gamepad1.x){
-                arm.armDown();
+              acquireArm.armTarget(10.0);
+                sleep(2000);
             }
             if(gamepad1.a){
-                arm.armUp();
+                acquireArm.armOrigin();
             }
-//            if (gamepad1.right_trigger>0){
-//                lift.land();
-//            }
-//            if(gamepad1.right_trigger>0){
-//                lift.downLift();
-//            }
-//            if (gamepad1.right_bumper){
-//                lift.setLiftPower(0.2);
-//            }
-//            else {
-//                if (gamepad1.left_bumper){
-//                    lift.setLiftPower(-0.2);
-//                }
-//                else {
-//                    lift.setLiftPower(0);
-//                }
-//            }
         }
     }
 }
