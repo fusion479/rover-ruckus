@@ -20,4 +20,5 @@ public class SampleArm extends Mechanism {
     public void armDown(){
         arm.setPosition(downPosition);
     }
+
 }

@@ -157,18 +157,9 @@ public class Drivetrain extends Mechanism {
         rightFront.setPower(right);
     }
 
-    public void driveToPos(double speed, double inches, double timeoutS) {
-
-
-        int newLeftFront = (int)(leftFront.getCurrentPosition() + inches*COUNTS_PER_INCH);
-        while (Math.abs(leftFront.getCurrentPosition() - newLeftFront)>3){
-            opMode.telemetry.addData("Current Position", leftFront.getCurrentPosition());
-        }
+    public void driveToPos(double speed, double inches) {
         int newLeftTarget;
         int newRightTarget;
-
-        // Current heading angle of robot
-        double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
         // Determine new target position, and pass to motor controller
         newLeftTarget = leftFront.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
@@ -192,8 +183,7 @@ public class Drivetrain extends Mechanism {
         runtime.reset();
 
         // Loop until a condition is met
-        while (opMode.opModeIsActive() &&
-                (runtime.seconds() < timeoutS) &&
+        while (opMode.opModeIsActive()  &&
                 leftFront.isBusy() && rightFront.isBusy() && leftBack.isBusy() && rightBack.isBusy())
         {
             correction = pidDrive.performPID(getAngle());

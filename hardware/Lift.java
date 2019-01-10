@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import android.net.LinkAddress;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -10,6 +11,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RoverRuckus.Constants;
 import org.firstinspires.ftc.teamcode.hardware.Mechanism;
+
+import static java.lang.Thread.sleep;
 
 
 public class Lift extends Mechanism {
@@ -22,23 +25,25 @@ public class Lift extends Mechanism {
     public DcMotor liftLeft;
     private DistanceSensor sensorRange;
     private Servo hook;
-    private boolean hasSensor;
-    Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor)sensorRange;
+    public Servo lockLeft;
+    public  Servo lockRight;
+    public boolean hasSensor;
+    public LinearOpMode opMode;
+
+    public Lift(LinearOpMode opMode){
+        this.opMode = opMode;
+    }
 
     public void init(HardwareMap hwMap) {
-//        if (sensor){
-//            hasSensor = sensor;
-//            sensorRange = hwMap.get(DistanceSensor.class, "sensor_range");
-//        }
         liftLeft = hwMap.dcMotor.get("liftLeft");
         liftRight = hwMap.dcMotor.get("liftRight");
-        hook = hwMap.servo.get("arm");
+        hook = hwMap.servo.get("hook");
+        lockLeft = hwMap.servo.get("lockLeft");
+        lockRight = hwMap.servo.get("lockRight");
         liftRight.setDirection(DcMotorSimple.Direction.REVERSE);
         liftLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-
         liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
         liftLeft.setPower(0);
         liftRight.setPower(0);
 
@@ -57,8 +62,18 @@ public class Lift extends Mechanism {
         setHook(0);
     }
 
-    public  void unhook(){
-        setHook(0.5);
+    public void unhook(){
+        setHook(1);
+    }
+
+    public void lock(){
+        lockRight.setPosition(0);
+        lockLeft.setPosition(1);
+    }
+
+    public  void unlock(){
+        lockRight.setPosition(1);
+        lockLeft.setPosition(0);
     }
 
     public void setLiftPower(double power){
@@ -66,44 +81,31 @@ public class Lift extends Mechanism {
         liftRight.setPower(power);
     }
 
-    public void liftToPos(double distance, LinearOpMode opMode){
-        opMode.telemetry.addData("encoder", liftRight.getCurrentPosition());
-        opMode.telemetry.update();
-        opMode.sleep(2000);
+    public void liftUp(){
+        liftToPos(10);
+    }
+
+    public void liftToPos(double distance){
         liftRight.setTargetPosition((int)(liftRight.getCurrentPosition()+distance*COUNTS_PER_INCH));
         liftLeft.setTargetPosition((int)(liftLeft.getCurrentPosition()+distance*COUNTS_PER_INCH));
-        opMode.telemetry.addData("encoder", liftRight.getCurrentPosition());
-        opMode.telemetry.update();
-        opMode.sleep(2000);
+        setLiftPower(1);
         liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    public void land(){
-//        if (hasSensor){
-//            while (sensorRange.getDistance(DistanceUnit.INCH)> Constants.bottomOfRobotToGround){
-//                liftLeft.setPower(liftSpeed);
-//                liftRight.setPower(liftSpeed);
-//            }
-//            liftRight.setPower(0);
-//            liftLeft.setPower(0);
-//        }
-//        else {
-            liftLeft.setTargetPosition((int)(Constants.heightNeededToLift * COUNTS_PER_INCH));
-            liftRight.setTargetPosition((int)(Constants.heightNeededToLift * COUNTS_PER_INCH));
-            liftRight.setPower(liftSpeed);
-            liftLeft.setPower(liftSpeed);
-            liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        }
+    public void land() throws InterruptedException {
+        unlock();
+        sleep(5000);
+        unhook();
     }
-    public void downLift(){
-        liftLeft.setTargetPosition(0);
-        liftRight.setTargetPosition(0);
-        liftRight.setPower(liftSpeed);
-        liftLeft.setPower(liftSpeed);
-        liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+    public void sendTelemetry(){
+        opMode.telemetry.addData("Left Lift Motor", liftLeft.getCurrentPosition());
+        opMode.telemetry.addData("Right Lift Motor", liftRight.getCurrentPosition());
+        opMode.telemetry.addData("Left Lift Servo", lockLeft.getPosition());
+        opMode.telemetry.addData("Right Lift Servo", lockRight.getPosition());
+        opMode.telemetry.addData("Hook", hook.getPosition());
     }
 
 }

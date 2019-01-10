@@ -34,7 +34,6 @@ public class Vision {
     }
 
     public void sampleInit(HardwareMap hwMap) {
-//        telemetry.addData("Status", "DogeCV 2018.0 - Sampling Order Example");
 
         order = new SamplingOrderDetector();
         order.init(hwMap.appContext, CameraViewDisplay.getInstance());
