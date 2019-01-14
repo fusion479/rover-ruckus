@@ -1,21 +1,15 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
-import android.net.LinkAddress;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.RoverRuckus.Constants;
-import org.firstinspires.ftc.teamcode.hardware.Mechanism;
-
-import static java.lang.Thread.sleep;
 
 
-public class Lift extends Mechanism {
+public class Lift extends org.firstinspires.ftc.teamcode.hardware.Mechanism {
     private static final double     COUNTS_PER_MOTOR_REV    = 1120;
     private static final double     SPROCKET_DIAMETER_INCHES   = 2.0;
     private static final double     COUNTS_PER_INCH         =
@@ -40,8 +34,8 @@ public class Lift extends Mechanism {
         hook = hwMap.servo.get("hook");
         lockLeft = hwMap.servo.get("lockLeft");
         lockRight = hwMap.servo.get("lockRight");
-        liftRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        liftLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        liftRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        liftLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftLeft.setPower(0);
@@ -74,15 +68,12 @@ public class Lift extends Mechanism {
     public  void unlock(){
         lockRight.setPosition(1);
         lockLeft.setPosition(0);
+        opMode.telemetry.addData("lock",lockRight.getPosition());
     }
 
     public void setLiftPower(double power){
         liftLeft.setPower(power);
         liftRight.setPower(power);
-    }
-
-    public void liftUp(){
-        liftToPos(10);
     }
 
     public void liftToPos(double distance){
@@ -93,10 +84,15 @@ public class Lift extends Mechanism {
         liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    public void land() throws InterruptedException {
-        unlock();
-        sleep(5000);
-        unhook();
+    public void land() {
+        liftLeft.setTargetPosition(300);
+        liftRight.setTargetPosition(300);
+        liftRight.setPower(1);
+        liftLeft.setPower(1);
+        liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftRight.setPower(0);
+        liftLeft.setPower(0);
     }
 
 

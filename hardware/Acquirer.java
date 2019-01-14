@@ -28,8 +28,6 @@ public class Acquirer extends Mechanism {
         acquireRight= hwMap.crservo.get("acquireRight");
         armRight.setDirection(DcMotorSimple.Direction.REVERSE);
         armLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        acquireLeft.setDirection(CRServo.Direction.FORWARD);
-        acquireRight.setDirection(CRServo.Direction.REVERSE);
 
         armLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -42,6 +40,9 @@ public class Acquirer extends Mechanism {
 
         armLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        acquireRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        acquireLeft.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     public void setArmPower(double power){
@@ -65,21 +66,19 @@ public class Acquirer extends Mechanism {
         armRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    public void setAcquirerPower(double power){
-        acquireRight.setPower(power);
-        acquireLeft.setPower(power);
-    }
-
     public void acquirerForward(){
-        setAcquirerPower(1);
+        acquireLeft.setPower(0.7);
+        acquireRight.setPower(0.7);
     }
 
     public void acquirerOff(){
-        setAcquirerPower(0);
+        acquireLeft.setPower(-0.7);
+        acquireRight.setPower(-0.7);
     }
 
-    public void acquirerReverse(){
-        setAcquirerPower(-1);
+    public void acquirerReverse() {
+        acquireLeft.setPower(-1);
+        acquireRight.setPower(-1);
     }
 
     public void sendTelemetry(){

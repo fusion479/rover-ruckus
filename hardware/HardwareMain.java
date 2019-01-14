@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.RoverRuckus.Constants;
 import org.firstinspires.ftc.teamcode.RoverRuckus.Vision;
 import org.firstinspires.ftc.teamcode.RoverRuckus.hardware.Acquirer;
 import org.firstinspires.ftc.teamcode.RoverRuckus.hardware.Drivetrain;
-import org.firstinspires.ftc.teamcode.RoverRuckus.hardware.SampleArm;
+import org.firstinspires.ftc.teamcode.RoverRuckus.hardware.TeamMarker;
 import org.firstinspires.ftc.teamcode.hardware.Lift;
 
 /**
@@ -25,6 +25,7 @@ public class HardwareMain {
     public  Lift lift;
     public LinearOpMode opMode;
     public Acquirer acquirer;
+    public TeamMarker marker;
 
     public HardwareMain(LinearOpMode opMode){
         drivetrain = new Drivetrain(opMode);
@@ -32,6 +33,7 @@ public class HardwareMain {
         this.opMode = opMode;
         lift = new Lift(opMode);
         acquirer = new Acquirer(opMode);
+        marker = new TeamMarker();
     }
     /**
      * Initializes all mechanisms on the robot.
@@ -43,6 +45,7 @@ public class HardwareMain {
         vision.goldAlignInit(hwMap);
         lift.init(hwMap);
         acquirer.init(hwMap);
+        marker.init(hwMap);
     }
 
     public void teleOpDrive(double drive, double rotate){

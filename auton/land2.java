@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.hardware.HardwareMain;
 
-@Autonomous(name = "Land", group = "test")
-public class Land extends LinearOpMode{
+@Autonomous(name = "Land2", group = "test")
+public class land2 extends LinearOpMode{
     public HardwareMain robot = new HardwareMain(this);
     public void runOpMode(){
         robot.init(hardwareMap);
@@ -21,15 +21,12 @@ public class Land extends LinearOpMode{
         sleep(2000);
         robot.lift.liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.lift.liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.lift.liftRight.setPower(0.2);
-        robot.lift.liftLeft.setPower(0.2);
-        sleep(700);
-        robot.lift.liftRight.setPower(0);
-        robot.lift.liftLeft.setPower(0);
+        robot.lift.land();
+        sleep(5000);
         robot.lift.hook();
-        sleep(1000);
-//        robot.drivetrain.turn(15,0.4);
+        sleep(5000);
         robot.drivetrain.driveToPos(0.8,80);
-        robot.marker.armUp();
+//        robot.marker.armUp();
     }
 }
+
