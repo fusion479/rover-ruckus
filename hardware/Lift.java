@@ -53,20 +53,20 @@ public class Lift extends org.firstinspires.ftc.teamcode.hardware.Mechanism {
     }
 
     public void hook(){
-        setHook(0);
+        setHook(0.3);
     }
 
     public void unhook(){
-        setHook(1);
+        setHook(0);
     }
 
     public void lock(){
-        lockRight.setPosition(0);
+        lockRight.setPosition(1);
         lockLeft.setPosition(1);
     }
 
     public  void unlock(){
-        lockRight.setPosition(1);
+        lockRight.setPosition(0);
         lockLeft.setPosition(0);
         opMode.telemetry.addData("lock",lockRight.getPosition());
     }
@@ -91,6 +91,11 @@ public class Lift extends org.firstinspires.ftc.teamcode.hardware.Mechanism {
         liftLeft.setPower(1);
         liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while(liftRight.isBusy() || liftLeft.isBusy()){
+            opMode.telemetry.addData("Left Lift", liftLeft.getCurrentPosition());
+            opMode.telemetry.addData("Right Lift", liftRight.getCurrentPosition());
+            opMode.telemetry.update();
+        }
         liftRight.setPower(0);
         liftLeft.setPower(0);
     }

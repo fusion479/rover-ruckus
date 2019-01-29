@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.hardware.HardwareMain;
 
-@Autonomous(name = "drive", group = "test")
+@Autonomous(name = "Turn 90", group = "test")
 public class drive extends LinearOpMode {
     public HardwareMain robot = new HardwareMain(this);
     public void runOpMode(){
@@ -13,6 +13,8 @@ public class drive extends LinearOpMode {
             telemetry.addData("Status", "Waiting in Init");
             telemetry.update();
         }
-        robot.drivetrain.driveToPos(0.8,90);
+        robot.drivetrain.turn(90,0.5);
+        telemetry.addData("current angle",robot.drivetrain.getAngle());
+        telemetry.update();
     }
 }

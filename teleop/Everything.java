@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.firstinspires.ftc.teamcode.hardware.HardwareMain;
 
 @TeleOp(name = "Test", group = "Test")
@@ -11,15 +12,16 @@ public class Everything extends LinearOpMode {
     public boolean x = false;
     public boolean y = false;
     public boolean locked = false;
+    public boolean acquire = false;
+    public boolean expel = false;
     public void runOpMode(){
-        robot.init(hardwareMap);
-        robot.vision.stopGoldAlign();
+        robot.teleOpInit(hardwareMap);
         waitForStart();
         while(opModeIsActive()) {
-            //robot.acquirer.sendTelemetry();
-            //robot.drivetrain.sendTelemetry();
-            //robot.lift.sendTelemetry();
-//            telemetry.update();
+            robot.acquirer.sendTelemetry();
+            robot.drivetrain.sendTelemetry();
+            robot.lift.sendTelemetry();
+            telemetry.update();
             robot.teleOpDrive(gamepad1.left_stick_y, -gamepad1.right_stick_x);
 
             if (gamepad1.a || gamepad2.a) {
@@ -32,26 +34,18 @@ public class Everything extends LinearOpMode {
                     hooked =!hooked;
                 }
             }
-            if (gamepad1.x) {
-                if(x){
-                    robot.acquirer.acquirerForward();
-                    x=!x;
+            if (gamepad2.right_trigger>0){
+                robot.acquirer.acquirerForward();
+            }
+            else{
+                if (gamepad2.left_trigger>0){
+                    robot.acquirer.acquirerReverse();
                 }
                 else{
                     robot.acquirer.acquirerOff();
-                    x=!x;
                 }
             }
-            if (gamepad1.y) {
-                if(y){
-                    robot.acquirer.armUp();
-                    y=!y;
-                }
-                else{
-                    robot.acquirer.returnArm();
-                    y=!y;
-                }
-            }
+            robot.acquirer.setArmPower(-gamepad2.right_stick_y);
 
             if(gamepad1.b || gamepad2.b){
                 if(locked){
@@ -63,22 +57,15 @@ public class Everything extends LinearOpMode {
                     locked = !locked;
                 }
             }
-            if (gamepad1.left_bumper || gamepad2.left_bumper) {
+            if (gamepad1.dpad_down || gamepad2.left_bumper) {
                 robot.lift.setLiftPower(-1);
             } else {
-                if (gamepad1.right_bumper || gamepad2.right_bumper) {
+                if (gamepad1.dpad_up || gamepad2.right_bumper) {
                     robot.lift.setLiftPower(0.3);
                 } else {
                     robot.lift.setLiftPower(0);
                 }
             }
-            robot.acquirer.setArmPower(-gamepad2.right_stick_y);
-        }
-        if(gamepad2.x){
-            robot.acquirer.acquirerForward();
-        }
-        else{
-            robot.acquirer.acquirerOff();
         }
     }
 }

@@ -42,7 +42,15 @@ public class HardwareMain {
     public void init(HardwareMap hwMap) {
         drivetrain.init(hwMap);
         drivetrain.encoderInit();
-        vision.goldAlignInit(hwMap);
+        vision.sampleInit(hwMap);
+        lift.init(hwMap);
+        acquirer.init(hwMap);
+        marker.init(hwMap);
+    }
+
+    public void teleOpInit(HardwareMap hwMap){
+        drivetrain.init(hwMap);
+        drivetrain.encoderInit();
         lift.init(hwMap);
         acquirer.init(hwMap);
         marker.init(hwMap);

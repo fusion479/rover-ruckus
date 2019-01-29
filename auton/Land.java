@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.hardware.HardwareMain;
 
-@Autonomous(name = "Land", group = "test")
+@Autonomous(name = "Timed Land", group = "test")
 public class Land extends LinearOpMode{
     public HardwareMain robot = new HardwareMain(this);
     public void runOpMode(){
@@ -28,7 +28,6 @@ public class Land extends LinearOpMode{
         robot.lift.liftLeft.setPower(0);
         robot.lift.hook();
         sleep(1000);
-//        robot.drivetrain.turn(15,0.4);
         robot.drivetrain.driveToPos(0.8,80);
         robot.marker.armUp();
     }

@@ -67,18 +67,18 @@ public class Acquirer extends Mechanism {
     }
 
     public void acquirerForward(){
-        acquireLeft.setPower(0.7);
-        acquireRight.setPower(0.7);
+        acquireLeft.setPower(-0.6);
+        acquireRight.setPower(-0.6);
     }
 
     public void acquirerOff(){
-        acquireLeft.setPower(-0.7);
-        acquireRight.setPower(-0.7);
+        acquireLeft.setPower(0);
+        acquireRight.setPower(0);
     }
 
     public void acquirerReverse() {
-        acquireLeft.setPower(-1);
-        acquireRight.setPower(-1);
+        acquireLeft.setPower(0.6);
+        acquireRight.setPower(0.6);
     }
 
     public void sendTelemetry(){

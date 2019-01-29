@@ -315,10 +315,16 @@ public class Drivetrain extends Mechanism {
         rightBack.setPower(power);
     }
 
+    public double getHeading(){
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return angles.firstAngle;
+    }
+
     public void sendTelemetry(){
         opMode.telemetry.addData("leftBack", leftBack.getCurrentPosition());
         opMode.telemetry.addData("leftFront", leftFront.getCurrentPosition());
         opMode.telemetry.addData("rightBack", rightBack.getCurrentPosition());
         opMode.telemetry.addData("rightFront", rightFront.getCurrentPosition());
+        opMode.telemetry.addData("Current Heading", getHeading());
     }
 }
