@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.hardware.HardwareMain;
 
-@TeleOp(name = "Test", group = "Test")
-public class Everything extends LinearOpMode {
+@TeleOp(name = "Half Power", group = "Test")
+public class half extends LinearOpMode {
     public HardwareMain robot = new HardwareMain(this);
     public boolean hooked = false;
     public boolean xPast,yPast,bPast,aPast;

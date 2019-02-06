@@ -186,14 +186,16 @@ public class Drivetrain extends Mechanism {
         while (opMode.opModeIsActive()  &&
                 leftFront.isBusy() && rightFront.isBusy() && leftBack.isBusy() && rightBack.isBusy())
         {
-            correction = pidDrive.performPID(getAngle());
-            setLeftPower(-power + correction);
-            setRightPower(-power);
+//            correction = pidDrive.performPID(getAngle());
+//            setLeftPower(-power + correction);
+//            setRightPower(-power);
         }
         // Stop all motion
         setLeftPower(0);
         setRightPower(0);
     }
+
+
 
     /**
      * Resets the cumulative angle tracking to zero.
@@ -254,8 +256,8 @@ public class Drivetrain extends Mechanism {
         pidRotate.reset();
         pidRotate.setSetpoint(degrees);
         pidRotate.setInputRange(0, 90);
-        pidRotate.setOutputRange(.20, power);
-        pidRotate.setTolerance(2);
+        pidRotate.setOutputRange(.05, power);
+        pidRotate.setTolerance(0.5);
         pidRotate.enable();
 
         // getAngle() returns + when rotating counter clockwise (left) and - when rotating

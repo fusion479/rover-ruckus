@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -23,6 +23,7 @@ public class Lift extends org.firstinspires.ftc.teamcode.hardware.Mechanism {
     public  Servo lockRight;
     public boolean hasSensor;
     public LinearOpMode opMode;
+    ModernRoboticsI2cRangeSensor rangeSensor;
 
     public Lift(LinearOpMode opMode){
         this.opMode = opMode;
@@ -34,6 +35,7 @@ public class Lift extends org.firstinspires.ftc.teamcode.hardware.Mechanism {
         hook = hwMap.servo.get("hook");
         lockLeft = hwMap.servo.get("lockLeft");
         lockRight = hwMap.servo.get("lockRight");
+        rangeSensor = hwMap.get(ModernRoboticsI2cRangeSensor.class, "range");
         liftRight.setDirection(DcMotorSimple.Direction.FORWARD);
         liftLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -79,14 +81,12 @@ public class Lift extends org.firstinspires.ftc.teamcode.hardware.Mechanism {
     public void liftToPos(double distance){
         liftRight.setTargetPosition((int)(liftRight.getCurrentPosition()+distance*COUNTS_PER_INCH));
         liftLeft.setTargetPosition((int)(liftLeft.getCurrentPosition()+distance*COUNTS_PER_INCH));
-        setLiftPower(1);
+        setLiftPower(Math.abs(distance)/distance);
         liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void land() {
-        liftLeft.setTargetPosition(300);
-        liftRight.setTargetPosition(300);
         liftRight.setPower(1);
         liftLeft.setPower(1);
         liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -107,6 +107,7 @@ public class Lift extends org.firstinspires.ftc.teamcode.hardware.Mechanism {
         opMode.telemetry.addData("Left Lift Servo", lockLeft.getPosition());
         opMode.telemetry.addData("Right Lift Servo", lockRight.getPosition());
         opMode.telemetry.addData("Hook", hook.getPosition());
+        opMode.telemetry.addData("range", rangeSensor.rawUltrasonic());
     }
 
 }
