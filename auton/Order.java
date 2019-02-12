@@ -18,6 +18,6 @@ public class Order extends LinearOpMode {
             telemetry.addData("Gold Position", position);
             telemetry.update();
         }
-        telemetry.addData("Position", robot.vision.getOrder());
+        robot.drivetrain.turn(90,0.8);
     }
 }

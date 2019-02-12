@@ -40,6 +40,16 @@ public class Everything extends LinearOpMode {
                     hooked =!hooked;
                 }
             }
+            if (xCurrent == true && xPast == false) {
+                if(hooked){
+                    robot.lift.setHook(0);
+                    hooked =!hooked;
+                }
+                else{
+                    robot.lift.hook();
+                    hooked =!hooked;
+                }
+            }
             if (gamepad2.right_trigger>0){
                 robot.acquirer.acquirerForward();
             }

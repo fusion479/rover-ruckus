@@ -15,10 +15,13 @@ public class Middle extends LinearOpMode {
             telemetry.addData("Gold Position", position);
             telemetry.update();
         }
-        robot.drivetrain.driveToPos(0.8, 40);
-        robot.drivetrain.turn(45, 0.5);
+        robot.drivetrain.driveToPos(0.8, 50);
         robot.marker.armUp();
         sleep(500);
-        robot.drivetrain.driveToPos(0.8, -120);
+        robot.drivetrain.turn(90, 0.5);
+        robot.drivetrain.turn(25, 0.5);
+        sleep(500);
+
+        robot.drivetrain.driveToPos(0.8, -80);
     }
 }

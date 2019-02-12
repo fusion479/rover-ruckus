@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -158,39 +157,15 @@ public class Drivetrain extends Mechanism {
     }
 
     public void driveToPos(double speed, double inches) {
-        int newLeftTarget;
-        int newRightTarget;
+        int newLeftTarget2;
 
         // Determine new target position, and pass to motor controller
-        newLeftTarget = leftFront.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
-        newRightTarget = rightFront.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
-        leftFront.setTargetPosition(newLeftTarget);
-        rightFront.setTargetPosition(newRightTarget);
-        leftBack.setTargetPosition(newLeftTarget);
-        rightBack.setTargetPosition(newRightTarget);
+        newLeftTarget2 = leftBack.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
 
-        setRightPower(speed);
-        setLeftPower(speed);
-
-        // Turn On RUN_TO_POSITION
-        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        // Reset the timeout time
-        ElapsedTime runtime = new ElapsedTime();
-        runtime.reset();
-
-        // Loop until a condition is met
-        while (opMode.opModeIsActive()  &&
-                leftFront.isBusy() && rightFront.isBusy() && leftBack.isBusy() && rightBack.isBusy())
-        {
-//            correction = pidDrive.performPID(getAngle());
-//            setLeftPower(-power + correction);
-//            setRightPower(-power);
+        while(Math.abs(leftBack.getCurrentPosition() - newLeftTarget2) > 10){
+            setLeftPower(0.4*inches/Math.abs(inches));
+            setRightPower(0.4*inches/Math.abs(inches));
         }
-        // Stop all motion
         setLeftPower(0);
         setRightPower(0);
     }

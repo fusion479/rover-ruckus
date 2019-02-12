@@ -55,11 +55,11 @@ public class Lift extends org.firstinspires.ftc.teamcode.hardware.Mechanism {
     }
 
     public void hook(){
-        setHook(0.3);
+        setHook(0.60);
     }
 
     public void unhook(){
-        setHook(0);
+        setHook(0.9);
     }
 
     public void lock(){
@@ -78,28 +78,14 @@ public class Lift extends org.firstinspires.ftc.teamcode.hardware.Mechanism {
         liftRight.setPower(power);
     }
 
-    public void liftToPos(double distance){
-        liftRight.setTargetPosition((int)(liftRight.getCurrentPosition()+distance*COUNTS_PER_INCH));
-        liftLeft.setTargetPosition((int)(liftLeft.getCurrentPosition()+distance*COUNTS_PER_INCH));
-        setLiftPower(Math.abs(distance)/distance);
-        liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
-    public void land() {
-        liftRight.setPower(1);
-        liftLeft.setPower(1);
-        liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        while(liftRight.isBusy() || liftLeft.isBusy()){
-            opMode.telemetry.addData("Left Lift", liftLeft.getCurrentPosition());
-            opMode.telemetry.addData("Right Lift", liftRight.getCurrentPosition());
-            opMode.telemetry.update();
+    public void land(){
+        liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        while(liftLeft.getCurrentPosition() < 1350 || liftRight.getCurrentPosition() < 1350){
+            setLiftPower(0.3);
         }
-        liftRight.setPower(0);
-        liftLeft.setPower(0);
+        setLiftPower(0);
     }
-
 
     public void sendTelemetry(){
         opMode.telemetry.addData("Left Lift Motor", liftLeft.getCurrentPosition());
