@@ -63,7 +63,7 @@ public class Everything extends LinearOpMode {
             }
             robot.acquirer.setArmPower(-gamepad2.right_stick_y/2);
 
-            if(bCurrent == true && bPast == false){
+            if(bCurrent  && !bPast){
                 if(locked){
                     robot.lift.unlock();
                     locked = !locked;
@@ -73,6 +73,10 @@ public class Everything extends LinearOpMode {
                     locked = !locked;
                 }
             }
+            if(yCurrent && !yPast){
+                robot.lift.liftUp();
+            }
+
             if (gamepad1.dpad_down || gamepad2.left_bumper) {
                 robot.lift.setLiftPower(-1);
             } else {
