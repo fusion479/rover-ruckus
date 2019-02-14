@@ -32,8 +32,8 @@ public class CraterEncoder extends LinearOpMode{
             telemetry.update();
             robot.drivetrain.driveToPos(0.8, 4);
             robot.drivetrain.turn(20, 1); //right
-            robot.drivetrain.driveToPos(0.8, 40);
-            robot.drivetrain.driveToPos(0.8, -10);
+            robot.drivetrain.driveToPos(0.8, 30);
+            robot.drivetrain.driveToPos(0.8, -12);
             robot.drivetrain.turn(-20, 0.5);
             robot.drivetrain.turn(-90, 0.5);
             robot.drivetrain.driveToPos(0.8, -40);
@@ -50,8 +50,8 @@ public class CraterEncoder extends LinearOpMode{
                 telemetry.update();
                 robot.drivetrain.driveToPos(0.8,4);
                 robot.drivetrain.turn(-30, 1);
-                robot.drivetrain.driveToPos(0.8, 40);
-                robot.drivetrain.driveToPos(0.8, -10);
+                robot.drivetrain.driveToPos(0.8, 30);
+                robot.drivetrain.driveToPos(0.8, -12);
                 robot.drivetrain.turn(-60, 0.5);
                 robot.drivetrain.driveToPos(0.8, -40);
                 robot.drivetrain.turn(45, 0.5);
@@ -63,7 +63,7 @@ public class CraterEncoder extends LinearOpMode{
             }
             else{
                 telemetry.addData("Path", "middle");
-                robot.drivetrain.driveToPos(0.8, 30);
+                robot.drivetrain.driveToPos(0.8, 25);
                 robot.drivetrain.driveToPos(0.8, -10);
                 robot.drivetrain.turn(-90, 0.5);
                 robot.drivetrain.driveToPos(0.8, -40);
