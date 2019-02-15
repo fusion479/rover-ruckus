@@ -32,13 +32,13 @@ public class CraterEncoder extends LinearOpMode{
             telemetry.update();
             robot.drivetrain.driveToPos(0.8, 4);
             robot.drivetrain.turn(20, 1); //right
-            robot.drivetrain.driveToPos(0.8, 30);
+            robot.drivetrain.driveToPos(0.8, 25);
             robot.drivetrain.driveToPos(0.8, -12);
             robot.drivetrain.turn(-20, 0.5);
             robot.drivetrain.turn(-90, 0.5);
-            robot.drivetrain.driveToPos(0.8, -40);
+            robot.drivetrain.driveToPos(0.8, -45);
             robot.drivetrain.turn(45, 0.5);
-            robot.drivetrain.driveToPos(0.8, -50);
+            robot.drivetrain.driveToPos(0.8, -45);
             sleep(500);
             robot.marker.armUp();
             sleep(500);
@@ -53,9 +53,9 @@ public class CraterEncoder extends LinearOpMode{
                 robot.drivetrain.driveToPos(0.8, 30);
                 robot.drivetrain.driveToPos(0.8, -12);
                 robot.drivetrain.turn(-60, 0.5);
-                robot.drivetrain.driveToPos(0.8, -40);
+                robot.drivetrain.driveToPos(0.8, -45);
                 robot.drivetrain.turn(45, 0.5);
-                robot.drivetrain.driveToPos(0.8, -50);
+                robot.drivetrain.driveToPos(0.8, -45);
                 sleep(500);
                 robot.marker.armUp();
                 sleep(500);
@@ -66,9 +66,9 @@ public class CraterEncoder extends LinearOpMode{
                 robot.drivetrain.driveToPos(0.8, 25);
                 robot.drivetrain.driveToPos(0.8, -10);
                 robot.drivetrain.turn(-90, 0.5);
-                robot.drivetrain.driveToPos(0.8, -40);
+                robot.drivetrain.driveToPos(0.8, -45);
                 robot.drivetrain.turn(45, 0.5);
-                robot.drivetrain.driveToPos(0.8, -50);
+                robot.drivetrain.driveToPos(0.8, -45);
                 sleep(500);
                 robot.marker.armUp();
                 sleep(500);
