@@ -28,7 +28,7 @@ public class CraterEncoder extends LinearOpMode{
         robot.lift.setHook(0.3);
         sleep(1500);
         if (position.equals("LEFT")) {
-            telemetry.addData("Path", "right");
+            telemetry.addData("Path", "left");
             telemetry.update();
             robot.drivetrain.driveToPos(0.8, 4);
             robot.drivetrain.turn(20, 1); //right

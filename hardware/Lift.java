@@ -87,11 +87,11 @@ public class Lift extends org.firstinspires.ftc.teamcode.hardware.Mechanism {
         setLiftPower(0);
     }
 
-    public void liftUp(){
+    public void liftDown(){
         liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         while(liftLeft.getCurrentPosition() < 5 || liftRight.getCurrentPosition() < 5){
-            setLiftPower(0.3);
+            setLiftPower(-0.3);
         }
         setLiftPower(0);
     }
