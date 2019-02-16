@@ -74,7 +74,7 @@ public class Everything extends LinearOpMode {
                 }
             }
             if(yCurrent && !yPast){
-                robot.lift.land();
+                robot.lift.liftDown();
             }
 
             if (gamepad1.dpad_down || gamepad2.left_bumper) {

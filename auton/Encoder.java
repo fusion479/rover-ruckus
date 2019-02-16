@@ -31,14 +31,15 @@ public class Encoder extends LinearOpMode{
             telemetry.addData("Path", "right");
             telemetry.update();
             robot.drivetrain.driveToPos(0.8,4);
-            robot.drivetrain.turn(20, 0.5); //right
+            robot.drivetrain.turn(30, 0.5); //right
             robot.drivetrain.driveToPos(0.8, 40);
-            robot.drivetrain.turn(-65, 0.5);
-            robot.drivetrain.driveToPos(0.8, 30);
+            robot.drivetrain.turn(-70, 0.5);
+            robot.drivetrain.driveToPos(0.8, 33);
             robot.marker.armUp();
             sleep(500);
             robot.drivetrain.turn(-90,0.5);
-            robot.drivetrain.driveToPos(0.8,70);
+//            robot.drivetrain.turn(10,0.3);
+            robot.drivetrain.driveToPos(-0.8, 80);
         }
         else{
             if (position.equals("RIGHT")) {
@@ -51,7 +52,7 @@ public class Encoder extends LinearOpMode{
                 robot.drivetrain.driveToPos(0.8, 20);
                 robot.drivetrain.turn(90,0.5);
                 robot.drivetrain.turn(90,0.5);
-                robot.drivetrain.driveToPos(0.8,-7);
+                robot.drivetrain.driveToPos(0.8,-10);
                 robot.marker.armUp();
                 sleep(500);
                 robot.drivetrain.driveToPos(-0.8, 90);
@@ -65,7 +66,7 @@ public class Encoder extends LinearOpMode{
                 sleep(500);
                 robot.drivetrain.turn(-45, 0.5);
                 robot.drivetrain.driveToPos(0.8, 10);
-                robot.drivetrain.turn(10,0.3);
+//                robot.drivetrain.turn(10,0.3);
                 robot.drivetrain.driveToPos(-0.8, 90);
             }
         }

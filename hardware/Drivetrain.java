@@ -162,7 +162,7 @@ public class Drivetrain extends Mechanism {
         // Determine new target position, and pass to motor controller
         newLeftTarget2 = leftBack.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
 
-        while(Math.abs(leftBack.getCurrentPosition() - newLeftTarget2) > 10){
+        while(Math.abs(leftBack.getCurrentPosition() - newLeftTarget2) > 20){
             setLeftPower(0.4*inches/Math.abs(inches));
             setRightPower(0.4*inches/Math.abs(inches));
         }
