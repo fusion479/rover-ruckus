@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.RoverRuckus.hardware;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.UltrasonicSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -21,7 +21,7 @@ public class Range_Lift extends org.firstinspires.ftc.teamcode.hardware.Mechanis
     private double liftPower;
     public DcMotor liftRight;
     public DcMotor liftLeft;
-    private UltrasonicSensor sensorRange;
+    private DistanceSensor sensorRange;
     private Servo hook;
     public Servo lockLeft;
     public  Servo lockRight;
@@ -39,11 +39,12 @@ public class Range_Lift extends org.firstinspires.ftc.teamcode.hardware.Mechanis
         hook = hwMap.servo.get("hook");
         lockLeft = hwMap.servo.get("lockLeft");
         lockRight = hwMap.servo.get("lockRight");
-        sensorRange = hwMap.ultrasonicSensor.get("range");
+        sensorRange = hwMap.get(DistanceSensor.class, "sensor_range");
         pidLift = new PIDController(0.05, 0 ,0);
         pidLift.setOutputRange(0,1);
         pidLift.setInputRange(6,35);//floor level
         pidLift.setSetpoint(7);
+        pidLift.setTolerance(5);
         liftRight.setDirection(DcMotorSimple.Direction.FORWARD);
         liftLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -95,18 +96,18 @@ public class Range_Lift extends org.firstinspires.ftc.teamcode.hardware.Mechanis
     }
 
     public void land() {
-        currentDist = sensorRange.getUltrasonicLevel();
+        currentDist = sensorRange.getDistance(DistanceUnit.CM);
         liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         while (currentDist > 7) {
             liftPower = pidLift.performPID(currentDist);
             liftLeft.setPower(liftPower);
             liftRight.setPower(liftPower);
-        }
-        while (liftRight.isBusy() || liftLeft.isBusy()) {
-            opMode.telemetry.addData("Left Lift", liftLeft.getCurrentPosition());
-            opMode.telemetry.addData("Right Lift", liftRight.getCurrentPosition());
-            opMode.telemetry.update();
+            if (liftRight.isBusy() || liftLeft.isBusy()) {
+                opMode.telemetry.addData("Left Lift", liftLeft.getCurrentPosition());
+                opMode.telemetry.addData("Right Lift", liftRight.getCurrentPosition());
+                opMode.telemetry.update();
+            }
         }
         liftRight.setPower(0);
         liftLeft.setPower(0);
@@ -119,7 +120,7 @@ public class Range_Lift extends org.firstinspires.ftc.teamcode.hardware.Mechanis
         opMode.telemetry.addData("Left Lift Servo", lockLeft.getPosition());
         opMode.telemetry.addData("Right Lift Servo", lockRight.getPosition());
         opMode.telemetry.addData("Hook", hook.getPosition());
-        opMode.telemetry.addData("RangeSensor",sensorRange.getUltrasonicLevel());
+        opMode.telemetry.addData("RangeSensor",sensorRange.getDistance(DistanceUnit.CM));
     }
 
 }
