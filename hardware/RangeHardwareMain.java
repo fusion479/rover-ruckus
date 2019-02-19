@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.RoverRuckus.Constants;
 import org.firstinspires.ftc.teamcode.RoverRuckus.Vision;
-import org.firstinspires.ftc.teamcode.hardware.Lift;
+import org.firstinspires.ftc.teamcode.RoverRuckus.hardware.Range_Lift;
 
 /**
  * HardwareTank is the class that is used to define all of the hardware for a single robot. In this
