@@ -13,8 +13,9 @@ public class Encoder extends LinearOpMode{
     public void runOpMode(){
         robot.init(hardwareMap);
         while (!opModeIsActive()&&!isStopRequested()) {
+            sleep(1000);
             temp = robot.vision.getOrder();
-            if(temp.equals("RIGHT")||temp.equals("LEFT")){
+            if(temp.equals("RIGHT")||temp.equals("LEFT") || temp.equals("CENTER") ){
                 position = temp;
             }
             telemetry.addData("Gold Position", position);
@@ -47,7 +48,7 @@ public class Encoder extends LinearOpMode{
                 telemetry.update();
                 robot.drivetrain.driveToPos(0.8,4);
                 robot.drivetrain.turn(-30, 0.5);
-                robot.drivetrain.driveToPos(0.8, 40);
+                robot.drivetrain.driveToPos(0.8, 45);
                 robot.drivetrain.turn(70, 0.5);
                 robot.drivetrain.driveToPos(0.8, 20);
                 robot.drivetrain.turn(90,0.5);
@@ -70,7 +71,7 @@ public class Encoder extends LinearOpMode{
                 robot.drivetrain.driveToPos(-0.8, 90);
             }
         }
-        robot.lift.liftDown();
+//        robot.lift.liftDown();
     }
 }
 

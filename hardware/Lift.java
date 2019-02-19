@@ -81,7 +81,7 @@ public class Lift extends org.firstinspires.ftc.teamcode.hardware.Mechanism {
     public void land(){
         liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        while(liftLeft.getCurrentPosition() < 1350 || liftRight.getCurrentPosition() < 1350){
+        while(liftLeft.getCurrentPosition() < 1355 || liftRight.getCurrentPosition() < 1355){
             setLiftPower(0.3);
         }
         setLiftPower(0);
