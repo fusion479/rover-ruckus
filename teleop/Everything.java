@@ -32,7 +32,7 @@ public class Everything extends LinearOpMode {
 
             if (aCurrent == true && aPast == false) {
                 if(hooked){
-                    robot.lift.unhook();
+                    robot.lift.setHook(0);
                     hooked =!hooked;
                 }
                 else{
@@ -42,7 +42,7 @@ public class Everything extends LinearOpMode {
             }
             if (xCurrent == true && xPast == false) {
                 if(hooked){
-                    robot.lift.setHook(0);
+                    robot.lift.unhook();
                     hooked =!hooked;
                 }
                 else{

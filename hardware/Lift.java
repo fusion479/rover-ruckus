@@ -55,11 +55,11 @@ public class Lift extends org.firstinspires.ftc.teamcode.hardware.Mechanism {
     }
 
     public void hook(){
-        setHook(0.60);
+        setHook(0.75);
     }
 
     public void unhook(){
-        setHook(0.9);
+        setHook(1);
     }
 
     public void lock(){

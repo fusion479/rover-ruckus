@@ -32,6 +32,7 @@ public class TensorMarker extends LinearOpMode{
             telemetry.addData("Sorry!", "This device is not compatible with TFOD");
         }
         tfod.activate();
+        sleep(2000);
         while (!opModeIsActive()&&!isStopRequested()) {
             if (tfod != null) {
                 // getUpdatedRecognitions() will return null if no new information is available since
@@ -43,22 +44,15 @@ public class TensorMarker extends LinearOpMode{
                         int goldMineralX = -1;
                         int silverMineral1X = -1;
                         int silverMineral2X = -1;
-                        for (Recognition recognition : updatedRecognitions) {
-                            if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                                goldMineralX = (int) recognition.getLeft();
-                            } else if (silverMineral1X == -1) {
-                                silverMineral1X = (int) recognition.getLeft();
-                            } else {
-                                silverMineral2X = (int) recognition.getLeft();
-                            }
-                        }
-                        if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
-                            if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
-                                telemetry.addData("Gold Mineral Position", "Left");
-                            } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
-                                telemetry.addData("Gold Mineral Position", "Right");
-                            } else {
-                                telemetry.addData("Gold Mineral Position", "Center");
+                        int objNum = 1;
+                        for (Recognition obj : updatedRecognitions) {
+                            telemetry.addData("Vision Obj#"+ objNum++, "label="+obj.getLabel()+
+                                    " left="+obj.getLeft()+
+                                    " right="+obj.getRight()+
+                                    " top="+obj.getTop()+
+                                    " confidence="+obj.getConfidence());
+                            if (obj.getLabel().equals(LABEL_GOLD_MINERAL) && obj.getConfidence() > 0.50 && obj.getTop() < 800){
+                                telemetry.addData("Found", "gold");
                             }
                         }
                     }
@@ -107,7 +101,7 @@ public class TensorMarker extends LinearOpMode{
             }
             else{
                 telemetry.addData("Path", "middle");
-                robot.drivetrain.driveToPos(0.8, 70);
+                robot.drivetrain.driveToPos(0.8, 65);
                 robot.drivetrain.turn(-90, 0.5);
                 sleep(500);
                 robot.marker.armUp();

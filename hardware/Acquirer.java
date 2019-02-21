@@ -1,20 +1,20 @@
 package org.firstinspires.ftc.teamcode.RoverRuckus.hardware;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.hardware.Mechanism;
-import org.openftc.revextensions2.ExpansionHubServo;
 import org.openftc.revextensions2.RevExtensions2;
 
 public class Acquirer extends Mechanism {
 
     public DcMotor armRight;
     public DcMotor armLeft;
-    public ExpansionHubServo acquireLeft;
-    public ExpansionHubServo acquireRight;
+    public CRServo acquireLeft;
+    public CRServo acquireRight;
     public LinearOpMode opMode;
 
     public Acquirer(LinearOpMode opMode){
@@ -27,8 +27,8 @@ public class Acquirer extends Mechanism {
 
         armLeft = hwMap.dcMotor.get("armLeft");
         armRight = hwMap.dcMotor.get("armRight");
-        acquireLeft= (ExpansionHubServo) hwMap.servo.get("acquireLeft");
-        acquireRight= (ExpansionHubServo) hwMap.servo.get("acquireRight");
+        acquireLeft= hwMap.crservo.get("acquireLeft");
+        acquireRight= hwMap.crservo.get("acquireRight");
         armRight.setDirection(DcMotorSimple.Direction.REVERSE);
         armLeft.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -43,6 +43,9 @@ public class Acquirer extends Mechanism {
 
         armLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        acquireLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        acquireRight.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     public void setArmPower(double power){
@@ -67,18 +70,18 @@ public class Acquirer extends Mechanism {
     }
 
     public void acquirerForward(){
-        acquireLeft.setPulseWidthUs(1000);
-        acquireRight.setPulseWidthUs(2000);
+        acquireLeft.setPower(0.6);
+        acquireRight.setPower(0.6);
     }
 
     public void acquirerOff(){
-        acquireLeft.setPulseWidthUs(1500);
-        acquireRight.setPulseWidthUs(1500);
+        acquireLeft.setPower(0);
+        acquireRight.setPower(0);
     }
 
     public void acquirerReverse() {
-        acquireLeft.setPulseWidthUs(2000);
-        acquireRight.setPulseWidthUs(1000);
+        acquireLeft.setPower(-0.6);
+        acquireRight.setPower(-0.6);
     }
 
     public void sendTelemetry(){
