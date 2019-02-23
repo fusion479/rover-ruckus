@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.RoverRuckus.Constants;
 import org.firstinspires.ftc.teamcode.RoverRuckus.Vision;
-import org.firstinspires.ftc.teamcode.RoverRuckus.hardware.Range_Lift;
 
 /**
  * HardwareTank is the class that is used to define all of the hardware for a single robot. In this
@@ -26,7 +25,7 @@ public class RangeHardwareMain {
 
     public RangeHardwareMain(LinearOpMode opMode){
         drivetrain = new Drivetrain(opMode);
-        vision = new Vision();
+        vision = new Vision(opMode);
         this.opMode = opMode;
         lift = new Range_Lift(opMode);
         acquirer = new Acquirer(opMode);

@@ -6,6 +6,7 @@ import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.disnodeteam.dogecv.detectors.roverrukus.SamplingOrderDetector;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -25,6 +26,11 @@ public class Vision {
     private static final String VUFORIA_KEY = "AW6TLL3/////AAABmZlyx8Jj9UH/gUL2Neu0K7haI1vHe8t9JqNd42HyN7gApocQoSfmih0P5dn/ZuPVLhVtH5hRkhY8xubKIiio/VhSwDCFint59TC+Z++tYx24d4bfgtQ55u/zUJDQrRzmwFOmt0eHgOSVAhdDIjKEADW8s5qQ5JtiiJ/S0jEhSHrHLTiqFAxC8tvmV8uM6UAFuRsnheMEkDk1U2Yd1ZO0S6sM4ohcJwM4fxyYocGnMbsmXDhmwERnALZIlV9Gnk5JcAaC94ditNYXeM4U6FXKDpeIAOW9bmKR3e4Wve64fOIZE9hQLfOrYnUTPY3QbqIoFCxB9JTBQBTi7dX94+3XqcLB4lRP6Y750fmO9ciYlQod";
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
+    public LinearOpMode opMode;
+
+    public Vision(LinearOpMode opMode){
+        this.opMode = opMode;
+    }
 
 
     public void goldAlignInit(HardwareMap hwMap){
@@ -46,7 +52,7 @@ public class Vision {
 
         goldAlign.enable();
     }
-    public void initTensor(HardwareMap hwMap) {
+    public void initVuforia() {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          */
@@ -57,6 +63,14 @@ public class Vision {
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        // Loading trackables is not necessary for the Tensor Flow Object Detection engine.
+    }
+
+    /**
+     * Initialize the Tensor Flow Object Detection engine.
+     */
+    public void initTfod(HardwareMap hwMap) {
         int tfodMonitorViewId = hwMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hwMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
@@ -89,35 +103,41 @@ public class Vision {
         return goldAlign.getAligned();
     }
 
-    public String getTensorFlow(){
+    public String goldPos;
+
+    public String getTensorFlow() {
         List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
         if (updatedRecognitions != null) {
-            if (updatedRecognitions.size() == 3) {
-                int goldMineralX = -1;
-                int silverMineral1X = -1;
-                int silverMineral2X = -1;
-                for (Recognition recognition : updatedRecognitions) {
-                    if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                        goldMineralX = (int) recognition.getLeft();
-                    } else if (silverMineral1X == -1) {
-                        silverMineral1X = (int) recognition.getLeft();
+            opMode.telemetry.addData("# Object Detected", updatedRecognitions.size());
+            for (Recognition obj : updatedRecognitions) {
+                if (obj.getLabel().equals(LABEL_GOLD_MINERAL) && obj.getTop() > 20) {
+                    opMode.telemetry.addData("label=" + obj.getLabel(),
+                            " left=" + obj.getLeft() +
+                                    " right=" + obj.getRight() +
+                                    " top=" + obj.getTop() +
+                                    " confidence=" + obj.getConfidence());
+                    if (obj.getLeft() < 200) {
+                        opMode.telemetry.addData("position", "left");
+                        opMode.telemetry.update();
+                        goldPos = "LEFT";
                     } else {
-                        silverMineral2X = (int) recognition.getLeft();
+                        if (obj.getLeft() > 700) {
+                            opMode.telemetry.addData("position", "right");
+                            opMode.telemetry.update();
+                            goldPos = "RIGHT";
+                        } else {
+                            opMode.telemetry.addData("position", "center");
+                            opMode.telemetry.update();
+                            goldPos = "CENTER";
+                        }
                     }
-                }
-                if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
-                    if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
-                        return "LEFT";
-                    } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
-                        return "RIGHT";
-                    } else {
-                        return "CENTER";
-                    }
+                    return goldPos;
                 }
             }
         }
-        return "UNKNOWN";
+        return "Hello";
     }
+
 
     public double getGoldXPos(){
         return goldAlign.getXPosition();

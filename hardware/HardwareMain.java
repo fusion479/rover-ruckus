@@ -29,7 +29,7 @@ public class HardwareMain {
 
     public HardwareMain(LinearOpMode opMode){
         drivetrain = new Drivetrain(opMode);
-        vision = new Vision();
+        vision = new Vision(opMode);
         this.opMode = opMode;
         lift = new Lift(opMode);
         acquirer = new Acquirer(opMode);
